@@ -1,0 +1,106 @@
+	<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8></meta>
+	<title></title>
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/base.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.2.2.1.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js"></script>
+	<script type="text/javascript" src="js/page.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+</head>
+<body>
+	<div class="contain">
+		<div>
+			<span class="discTitle">输入要转换的资源</span>
+			<select id="discInput" onchange="discSelect(1)">
+				<option>c:/</option>
+				<option>d:/</option>
+				<option>e:/</option>
+				<option>f:/</option>
+				<option>g:/</option>
+				<option value="other">其他</option>
+			</select>
+			<input id="sourceDir" name="sourceDir"/>
+		</div>
+		<div class="mt10">
+			<span class="discTitle">输出的路径</span>
+			<select id="discOutput" onchange="discSelect(2)">
+				<option>c:/</option>
+				<option>d:/</option>
+				<option>e:/</option>
+				<option>f:/</option>
+				<option>g:/</option>
+				<option value="other">其他</option>
+			</select>
+			<input id="outputDir" name="outputDir" />
+		</div>
+		<button id="submit" onclick="UploadFile();return false;" class="btn btn-success mt10">开始转换</button>
+		 <div id="scanModule" style="display: none;">
+			<div class="tree">
+				<!-- <button id="all">Toggle All</button> -->
+				<ul>
+			        <li>
+			        	<a>第一级目录</a>
+			            <ul>
+			                <li><a>第二级目录</a></li>
+			                <li><a>第二级目录</a></li>
+			                <li><a>第二级目录</a></li>
+			            </ul>
+			        </li>
+			        <li>
+			        	<a>第一级目录</a>
+			            <ul>
+			                <li>
+			                	<a>第二级目录</a>
+			                    <ul>
+			                        <li><a>第三级目录</a></li>
+			                        <li><a>第三级目录</a></li>
+			                        <li><a>第三级目录</a>
+			                            <ul>
+			                                <li><a>第四级目录</a></li>
+			                                <li><a>第四级目录</a></li>
+			                                <li><a>第四级目录</a>
+			                                    <ul>
+			                                        <li><a>第五级目录</a></li>
+			                                        <li><a>第五级目录</a></li>
+			                                        <li><a>第五级目录</a></li>
+			                                    </ul>
+			                                </li>
+			                            </ul>
+			                        </li>
+			                    </ul>
+			                </li>
+			                <li><a>第二级目录</a></li>
+			            </ul>
+			        </li>
+			        <li><a>第一级目录</a>
+			            <ul>
+			                <li><a>第二级目录</a></li>
+			                <li><a>第二级目录</a></li>
+			            </ul>
+			        </li>
+				</ul>
+			</div>
+			<div class="line_sperate fl"></div>
+			<div class="accountReport fl">
+			<h3 style="font-size: 15px;font-weight: 700;width: 100%;margin-bottom: 5px;text-align: center;">结构分析</h3>
+				<ul class="fl">
+					<li>类 : </li>
+					<li>接口 : </li>
+					<li>方法 : </li>
+				</ul>
+				<ul id="reportNum" class="fl second">
+					<li><span>6</span>个</li>
+					<li><span>8</span>个</li>
+					<li><span>8</span>个</li>
+					<li><span>5</span>个</li>
+					<li><span>4</span>个</li>
+				</ul>
+			</div>
+		<div>
+	</div>
+</body>
+</html>

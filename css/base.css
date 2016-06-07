@@ -1,0 +1,24 @@
+.mt5{
+	margin-top: 5px;
+}
+.mt10{
+	margin-top: 10px;
+}
+.mt15{
+	margin-top: 15px!important;
+}
+.mt20{
+	margin-top: 20px!important;
+}
+.mt80{
+	margin-top: 80px!important;
+}
+.ml{
+    margin-left: 10px;
+}
+.fl{
+    float: left!important;
+}
+.fr{
+	float: right!important;
+}
