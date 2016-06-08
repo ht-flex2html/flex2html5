@@ -1,7 +1,7 @@
 var NodeKind = require('./nodeKind');
 var KeyWords = require('./keywords');
 var Node = require('./nodeObj');
-var basePackage = require('./basePackage');
+// var basePackage = require('./basePackage');
 var plus = require("./plus");
 //Utils
 function assign(target) {
@@ -138,7 +138,7 @@ visitors[NodeKind.NEW] = emitNew;
 visitors[NodeKind.RELATION] = emitRelation;
 visitors[NodeKind.OP] = emitOp;
 visitors[NodeKind.IDENTIFIER] = emitIdent;
-visitors[NodeKind.IDENTIFIER_PLUS] = emitPlugs;
+// visitors[NodeKind.IDENTIFIER_PLUS] = emitPlugs;
 visitors[NodeKind.XML_LITERAL] = emitXMLLiteral;
 visitors[NodeKind.CONST_LIST] = emitConstList;
 // visitors[No]
@@ -419,12 +419,6 @@ function emitNew(node) {
     state.isNew = false;
 }
 function emitCall(node) {
-    // if (node.text in base_package) {
-    //      if(node.text == "Alert"){
-    //          skipTo(node.end);
-    //          insert('alert');
-    //      }
-    // } else {
     catchup(node.start);
     var isNew = state.isNew;
     state.isNew = false;
@@ -491,27 +485,26 @@ function emitOp(node) {
     catchup(node.end);
 }
 function emitPlugs(node) {
-    catchup(node.start);
-    var type;
-    var skipNum;
-    if(node.kind === NodeKind.IDENTIFIER_PLUS){
-           if(!!plus[node.text]){
-               var result = plus[node.text].MapFunction(node);
-               type = result.content;
-               skipNum = result.skipToNum; 
-           }
-            if (!!type){
-                insert(type);
-                skipTo(skipNum);
-            }
-            return;
+    if (!!plus[node.text]){
+        var result = plus[node.text].MapFunction(node);
+        var type = result.content;
+        var skipNum = result.skipToNum; 
+        if (!!type){
+            insert(type);
+            skipTo(skipNum);
+        }
     }
+    return;
 }
 function emitIdent(node) {
     catchup(node.start);
+    emitPlugs(node);
+    
        //in case of dot just check the first
-    if (node.parent.children[0] !== node) {
-        return;
+    if (node.parent && node.parent.kind === NodeKind.DOT) {
+        if (node.parent.children[0] !== node) {
+            return;
+        }
     }
     if (isKeyWord(node.text)) {
         return;
