@@ -99,6 +99,8 @@ var NodeKind = {
     WHILE: "while",
     XML_LITERAL: "xml_literal",
     LITERAL: "literal",
-    IDENTIFIER: "identifier"
+    IDENTIFIER: "identifier",
+    IDENTIFIER_PLUS:"identifier_plus"
+    // BASE_PACKAGE:"base_"
 };
 module.exports = NodeKind;

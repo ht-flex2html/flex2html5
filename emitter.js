@@ -1,6 +1,8 @@
 var NodeKind = require('./nodeKind');
 var KeyWords = require('./keywords');
-var Node = require('./nodeYes');
+var Node = require('./nodeObj');
+var basePackage = require('./basePackage');
+var plus = require("./plus");
 //Utils
 function assign(target) {
     var items = [];
@@ -23,9 +25,15 @@ function isKeyWord(text) {
     return !!keywordsCheck[text];
 }
 function transformAST(node, parentNode) {
+    //返回每个单词
     //we don't care about comment
     var newNode = new Node(node.kind, node.start, node.end, node.text, [], parentNode);
-    newNode.children = node.children.filter(function (child) { return !!child && child.kind !== NodeKind.AS_DOC && child.kind !== NodeKind.MULTI_LINE_COMMENT; }).map(function (child) { return transformAST(child, newNode); });
+    newNode.children = node.children.filter(
+        function (child) {
+                return !!child && child.kind !== NodeKind.AS_DOC && child.kind !== NodeKind.MULTI_LINE_COMMENT; 
+            }).map(function (child) { 
+                return transformAST(child, newNode); 
+            });
     return newNode;
 }
 var globVars = [
@@ -77,6 +85,7 @@ var globVars = [
 var defaultEmitterOptions = {
     lineSeparator: '\n'
 };
+var base_package = [];
 var data;
 var state;
 var output;
@@ -95,9 +104,11 @@ function emit(ast, source, options) {
     };
     output = '';
     enterScope([]);
-    visitNode(transformAST(ast, null));
+    var a = transformAST(ast, null)
+    visitNode(a);
     catchup(data.source.length - 1);
     exitScope();
+    // console.log(output);
     return output;
 }
 exports.emit = emit;
@@ -105,7 +116,10 @@ function visitNodes(nodes) {
     if (!nodes) {
         return;
     }
-    nodes.forEach(function (node) { return visitNode(node); });
+    nodes.forEach(function (node) {
+        // console.log(node)
+         return visitNode(node); 
+    });
 }
 var visitors = {};
 visitors[NodeKind.PACKAGE] = emitPackage;
@@ -124,12 +138,15 @@ visitors[NodeKind.NEW] = emitNew;
 visitors[NodeKind.RELATION] = emitRelation;
 visitors[NodeKind.OP] = emitOp;
 visitors[NodeKind.IDENTIFIER] = emitIdent;
+visitors[NodeKind.IDENTIFIER_PLUS] = emitPlugs;
 visitors[NodeKind.XML_LITERAL] = emitXMLLiteral;
 visitors[NodeKind.CONST_LIST] = emitConstList;
+// visitors[No]
 function visitNode(node) {
     if (!node) {
         return;
     }
+    // console.log(node.kind);
     if (visitors.hasOwnProperty(node.kind)) {
         visitors[node.kind](node);
     }
@@ -156,6 +173,7 @@ function emitImport(node) {
     catchup(node.start + NodeKind.IMPORT.length + 1);
     var split = node.text.split('.');
     var name = split[split.length - 1];
+    base_package.push(name);
     insert(name + ' = ');
     catchup(node.end);
     state.scope.declarations.push({ name: name });
@@ -316,14 +334,14 @@ function emitDeclaration(node) {
     var mods = node.findChild(NodeKind.MOD_LIST);
     if (mods && mods.children.length) {
         catchup(mods.start);
-        var insertExport = false;
+         var insertExport = false;
         mods.children.forEach(function (node) {
             if (node.text !== 'private') {
                 insertExport = true;
             }
             skipTo(node.end);
         });
-        if (insertExport) {
+         if (insertExport) {
             insert('export');
         }
     }
@@ -368,6 +386,9 @@ function emitVector(node) {
     }
     skipTo(node.end);
 }
+function emitAlert(node){
+    catchup(node.start);
+}
 function emitShortVector(node) {
     catchup(node.start);
     var vector = node.findChild(NodeKind.VECTOR);
@@ -398,6 +419,12 @@ function emitNew(node) {
     state.isNew = false;
 }
 function emitCall(node) {
+    // if (node.text in base_package) {
+    //      if(node.text == "Alert"){
+    //          skipTo(node.end);
+    //          insert('alert');
+    //      }
+    // } else {
     catchup(node.start);
     var isNew = state.isNew;
     state.isNew = false;
@@ -432,6 +459,7 @@ function emitCall(node) {
             return;
         }
     }
+    // }
     visitNodes(node.children);
 }
 function emitRelation(node) {
@@ -462,13 +490,28 @@ function emitOp(node) {
     }
     catchup(node.end);
 }
+function emitPlugs(node) {
+    catchup(node.start);
+    var type;
+    var skipNum;
+    if(node.kind === NodeKind.IDENTIFIER_PLUS){
+           if(!!plus[node.text]){
+               var result = plus[node.text].MapFunction(node);
+               type = result.content;
+               skipNum = result.skipToNum; 
+           }
+            if (!!type){
+                insert(type);
+                skipTo(skipNum);
+            }
+            return;
+    }
+}
 function emitIdent(node) {
     catchup(node.start);
-    if (node.parent && node.parent.kind === NodeKind.DOT) {
-        //in case of dot just check the first
-        if (node.parent.children[0] !== node) {
-            return;
-        }
+       //in case of dot just check the first
+    if (node.parent.children[0] !== node) {
+        return;
     }
     if (isKeyWord(node.text)) {
         return;
@@ -595,10 +638,13 @@ function commentNode(node, catchSemi) {
     insert('*/');
 }
 function catchup(index) {
+    console.log(index);
     if (state.index > index) {
         return;
     }
     while (state.index !== index) {
+        console.log(state.index);
+        console.log(data.source[state.index]);
         output += data.source[state.index];
         state.index++;
     }

@@ -32,13 +32,16 @@ var AS3Scanner = require('./scanner');
 var NodeKind = require('./nodeKind');
 var Operators = require('./operators');
 var KeyWords = require('./keywords');
-var Node = require('./nodeYes');
+var Node = require('./nodeObj');
+var BasePackage = require('./basePackage');
 var ASDOC_COMMENT = "/**";
 var MULTIPLE_LINES_COMMENT = "/*";
 var NEW_LINE = "\n";
 var SINGLE_LINE_COMMENT = "//";
 var VECTOR = "Vector";
 function startsWith(string, prefix) {
+    // var flag = string.indexOf(prefix) === 0;
+    // console.log(flag);
     return string.indexOf(prefix) === 0;
 }
 ;
@@ -67,7 +70,7 @@ function getLengthOfLineBreak(text, index) {
         return 0;
     }
 }
-function buildLineMap(text) {
+ function buildLineMap(text) {
     var length = text.length;
     // Corner case check
     if (0 === length) {
@@ -158,7 +161,9 @@ var AS3Parser = (function () {
             else {
                 this.nextTokenAllowNewLine();
             }
-        } while (this.tok.text === NEW_LINE);
+        } while (
+            this.tok.text === NEW_LINE
+        );
     };
     AS3Parser.prototype.tryParse = function (func) {
         var tok = this.tok;
@@ -223,7 +228,7 @@ var AS3Parser = (function () {
             result.children.push(this.parsePackage());
         }
         result.children.push(this.parsePackageContent());
-        return result;
+        return result;//??
     };
     /**
      * @return
@@ -269,6 +274,8 @@ var AS3Parser = (function () {
      *
      * @throws UnExpectedTokenException
      */
+    
+    //关键字匹配
     AS3Parser.prototype.parsePackageContent = function () {
         var result = new Node(NodeKind.CONTENT, this.tok.index, -1);
         var modifiers = [];
@@ -355,11 +362,17 @@ var AS3Parser = (function () {
                 return new Node(NodeKind.LITERAL, tok.index, tok.end, tok.text);
             }
         }
+        
+      
+        
         if (this.tok.isXML) {
             result = new Node(NodeKind.XML_LITERAL, this.tok.index, this.tok.end, this.tok.text);
         }
         else if (this.tok.isNumeric || /('|")/.test(this.tok.text[0])) {
             result = new Node(NodeKind.LITERAL, this.tok.index, this.tok.end, this.tok.text);
+        }
+        else if(BasePackage.test(this.tok.text)){
+            result = new Node(NodeKind.IDENTIFIER_PLUS, this.tok.index, this.tok.end, this.tok.text);
         }
         else {
             result = new Node(NodeKind.IDENTIFIER, this.tok.index, this.tok.end, this.tok.text);
@@ -556,7 +569,8 @@ var AS3Parser = (function () {
             if (this.tok.text == null) {
                 throw new Error(this.fileName);
             }
-        } while (startsWith(this.tok.text, SINGLE_LINE_COMMENT));
+        } while (
+            startsWith(this.tok.text, SINGLE_LINE_COMMENT));
     };
     AS3Parser.prototype.nextTokenIgnoringDocumentation = function () {
         do {
@@ -884,6 +898,7 @@ var AS3Parser = (function () {
         }
         var result = new Node(NodeKind.DOT, node.start, -1);
         result.children.push(node);
+        // if(node.text !== "Alert")
         result.children.push(new Node(NodeKind.LITERAL, this.tok.index, this.tok.end, this.tok.text));
         this.nextToken(true);
         result.end = result.children.reduce(function (index, child) {
@@ -1056,7 +1071,7 @@ var AS3Parser = (function () {
         return result;
     };
     /**
-     * tok is function exit tok is the first token after the optional ;
+     * tok is function exit tok is the first token after the optional;
      *
      * @throws TokenException
      */
@@ -1232,6 +1247,7 @@ var AS3Parser = (function () {
     AS3Parser.prototype.parseFile = function (filePath, content) {
         this.setFileName(filePath);
         this.scn = new AS3Scanner();
+        //构造scanner
         this.scn.setContent(content);
         return this.parseCompilationUnit();
     };
@@ -1385,6 +1401,7 @@ var AS3Parser = (function () {
         }
         result.children.push(new Node(NodeKind.NAME, index, index + nameBuffer.length, nameBuffer));
         this.consume(Operators.LEFT_CURLY_BRACKET);
+        //匹配关键字
         result.children.push(this.parsePackageContent());
         tok = this.consume(Operators.RIGHT_CURLY_BRACKET);
         result.end = tok.end;
