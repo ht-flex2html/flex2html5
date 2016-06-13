@@ -1,7 +1,6 @@
 var NodeKind = require('./nodeKind');
 var KeyWords = require('./keywords');
 var Node = require('./nodeObj');
-// var basePackage = require('./basePackage');
 var plus = require("./plus");
 //Utils
 function assign(target) {
@@ -138,7 +137,6 @@ visitors[NodeKind.NEW] = emitNew;
 visitors[NodeKind.RELATION] = emitRelation;
 visitors[NodeKind.OP] = emitOp;
 visitors[NodeKind.IDENTIFIER] = emitIdent;
-// visitors[NodeKind.IDENTIFIER_PLUS] = emitPlugs;
 visitors[NodeKind.XML_LITERAL] = emitXMLLiteral;
 visitors[NodeKind.CONST_LIST] = emitConstList;
 // visitors[No]

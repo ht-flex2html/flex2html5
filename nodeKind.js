@@ -100,6 +100,5 @@ var NodeKind = {
     XML_LITERAL: "xml_literal",
     LITERAL: "literal",
     IDENTIFIER: "identifier"
-    // IDENTIFIER_PLUS:"identifier_plus"
 };
 module.exports = NodeKind;

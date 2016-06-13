@@ -33,14 +33,12 @@ var NodeKind = require('./nodeKind');
 var Operators = require('./operators');
 var KeyWords = require('./keywords');
 var Node = require('./nodeObj');
-// var BasePackage = require('./basePackage');
 var ASDOC_COMMENT = "/**";
 var MULTIPLE_LINES_COMMENT = "/*";
 var NEW_LINE = "\n";
 var SINGLE_LINE_COMMENT = "//";
 var VECTOR = "Vector";
 function startsWith(string, prefix) {
-    // var flag = string.indexOf(prefix) === 0;
     // console.log(flag);
     return string.indexOf(prefix) === 0;
 }
@@ -84,6 +82,7 @@ function getLengthOfLineBreak(text, index) {
     var lineNumber = 0;
     while (index < length) {
         var c = text.charCodeAt(index);
+        console.log(c);
         var lineBreakLength;
         // common case - ASCII & not a line break
         if (c > 13 && c <= 127) {
@@ -228,7 +227,7 @@ var AS3Parser = (function () {
             result.children.push(this.parsePackage());
         }
         result.children.push(this.parsePackageContent());
-        return result;//??
+        return result;
     };
     /**
      * @return
@@ -371,9 +370,6 @@ var AS3Parser = (function () {
         else if (this.tok.isNumeric || /('|")/.test(this.tok.text[0])) {
             result = new Node(NodeKind.LITERAL, this.tok.index, this.tok.end, this.tok.text);
         }
-        // else if(BasePackage.test(this.tok.text)){
-        //     result = new Node(NodeKind.IDENTIFIER_PLUS, this.tok.index, this.tok.end, this.tok.text);
-        // }
         else {
             result = new Node(NodeKind.IDENTIFIER, this.tok.index, this.tok.end, this.tok.text);
         }

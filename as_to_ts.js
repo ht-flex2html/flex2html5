@@ -5,7 +5,7 @@ var path = require('path');
 require('fs-extended');
 var rimraf = require('rimraf');
 var fs = require("fs");
-
+var htmlObj = require("./htmlObj");
 function flatten(arr) {
     return arr.reduce(function (result, val) {
         if (Array.isArray(val)) {
@@ -45,13 +45,18 @@ function run(exchangeSource) {
 
     fs.mkdirSync(outputDir);
     var files = readdir(sourceDir).filter(function (file) { 
-        return /.as$/.test(file); 
+        return /.as$/.test(file) || /.mxml$/.test(file); 
     });
 
-    var number = 0;
+    // var number = 0;
     var length = files.length;
     var asAccount = {functionNum:0,interfaceNum:0,classNum:0};
     files.forEach(function (file) {
+        var isAs = true; 
+        if(/.mxml$/i.test(file)){
+            isAs = false;
+        }
+        
         var parser = new AS3Parser();
         // console.log('compiling \'' + file + '\' ' + number + '/' + length);
         var content = fs.readFileSync(path.resolve(sourceDir, file), 'UTF-8');
@@ -64,9 +69,20 @@ function run(exchangeSource) {
 
         // console.log(content);
         var ast = parser.buildAst(path.basename(file), content);
-        // console.log('emitting');
-        fs.createFileSync(path.resolve(outputDir, file.replace(/.as$/, '.ts')), emitter.emit(ast, content));
-        number++;
+
+        var outputFileName;
+        var outputContent;
+        if (isAs) {
+            outputFileName = file.replace(/.as$/i, '.ts');
+            outputContent = emitter.emit(ast, content);
+        } else {
+            outputFileName = file.replace(/.mxml$/i,'.html');
+            var obj = new htmlObj();
+            outputContent = obj.html;
+        }
+
+        fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);
+        // number++;
     });
     return asAccount;
 }
