@@ -74,7 +74,8 @@ function run(exchangeSource) {
         var outputContent;
         if (isAs) {
             outputFileName = file.replace(/.as$/i, '.ts');
-            outputContent = emitter.emit(ast, content);
+            // outputContent = emitter.emit(ast, content);
+            outputContent = emitter.asth(ast);
         } else {
             outputFileName = file.replace(/.mxml$/i,'.html');
             var obj = new htmlObj();

@@ -2,6 +2,8 @@ var NodeKind = require('./nodeKind');
 var KeyWords = require('./keywords');
 var Node = require('./nodeObj');
 var plus = require("./plus");
+var cheerio = require('cheerio');
+var fs = require('fs');
 //Utils
 function assign(target) {
     var items = [];
@@ -656,3 +658,119 @@ function consume(string, limit) {
     }
     state.index = index;
 }
+/*
+Convert AS To HTML
+*/
+function asth(ast, source, options) {
+    var content = fs.readFileSync('module/htmlLayout.html','utf-8');
+    $ = cheerio.load(content);
+    currentDom = $("body");
+    
+    var class_node=ast.findChild(NodeKind.PACKAGE).findChild(NodeKind.CONTENT).findChild(NodeKind.CLASS);
+    var class_content_node=class_node.findChild(NodeKind.CONTENT);
+    var class_name=class_node.findChild(NodeKind.NAME).text;
+    
+    //return Elements
+    createHtmlElement(class_name,class_content_node);
+   
+   //addHtmlElementToDOM(Elements)
+   
+   //output document file
+    output = '';
+
+    console.log($.html());
+
+    return output;
+}
+
+function createHtmlElement(function_name,class_content_node){
+    function Element(tag, attributes, style, extend , text, parentid) {
+        this.tag = tag;
+        this.attributes =attributes;
+        this.style = style;
+        this.extend = extend;
+        this.text = text;
+        this.parentid = parentid;
+    }
+    //tag map file
+    var domTags = {body:"body",form:"form",div:"div"};
+    var paramTags={id:"id",title:"title",name:"name"};
+    var styleTags={width:"width",height:"height"};
+    var extendTags={click:"click",customer:"customer"};//creationComplete To onload
+    var function_node=class_content_node.findFunctionByName(function_name);
+    var function_block=function_node.findChild("block");
+    var function_type=function_node.findChild(NodeKind.TYPE).text.toUpperCase();
+    //next function
+    var next_Function, tag, assignName, assignValue;
+    var argumentArray = [];
+
+    //判断是否含有var temp : Array 有则直接循环CreateEle 否则构建本身元素
+    if(function_type == "ARRAY"){
+        var subFuncArr = function_block.getFuncBlockTempArray();
+        for(var i = 0; i < subFuncArr.length; i++){
+            createHtmlElement(subFuncArr[i], class_content_node);
+            // currentDom = currentDom.parent();
+        }
+    } else {
+        if(function_type.length > 0 && domTags.hasOwnProperty(function_type)){
+              tag=function_type;//需转换MXML 为HTML 标签
+        }else{
+            tag="div";
+        }
+       if (domTags.hasOwnProperty(tag)) {
+            var HTMLElem=new Element(tag);
+            var attrArray = new Array();
+            var styleArray = new Array();
+            var extendArray = new Array();
+            var paramTagsArray = new Array();
+             function_block.findChildren("assign").forEach(function(node) {
+                 assignName = node.getAssignName();
+                 assignValue = node.findChild("literal")? node.findChild("literal").text : null;
+                 
+                 if (styleTags.hasOwnProperty(assignName)) { 
+                     styleArray.push(assignName+":"+assignValue);
+                   } else if (paramTags.hasOwnProperty(assignName)) {
+                       paramTagsArray.push(assignName+"='"+assignValue+"'");
+                  } else if (assignName=="mxmlContentFactory"){
+                      argumentArray=node.getArguments();
+                      if(argumentArray.length > 0){
+                          next_Function = argumentArray[0];
+                      }
+                  }
+             });
+            function_block.findChildren("call").forEach(function(node) {
+                assignName=node.getAssignName();
+                argumentArray=node.getArguments();
+                if(argumentArray.length>2){
+                    if(argumentArray[0] && argumentArray[1])
+                        extendArray.push(null);
+                    else 
+                        extendArray.push(argumentArray[0] + "=" + argumentArray[1]);
+                }
+            });
+            HTMLElem.attributes=attrArray.join(" ");
+            HTMLElem.style=styleArray.join();
+            HTMLElem.extend=extendArray.join(" ");
+            
+            addHtmlElementToDOM(HTMLElem);
+            
+            if(!!next_Function && next_Function.length > 0){
+                createHtmlElement(next_Function, class_content_node)
+            }
+            currentDom = currentDom.parent();
+        }
+    }
+}
+
+function addHtmlElementToDOM(elem){
+    switch(elem.tag){
+        case "div":
+            currentDom.append("<div>" + (elem.text || "") + "</div>");
+            console.log($.html());
+            currentDom = currentDom.children().last();
+            break;
+    }
+}
+exports.asth = asth;
+
+

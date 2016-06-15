@@ -82,7 +82,7 @@ function getLengthOfLineBreak(text, index) {
     var lineNumber = 0;
     while (index < length) {
         var c = text.charCodeAt(index);
-        console.log(c);
+        // console.log(c);
         var lineBreakLength;
         // common case - ASCII & not a line break
         if (c > 13 && c <= 127) {
