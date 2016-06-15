@@ -1,46 +1,39 @@
 var cheerio = require('cheerio');
 var fs = require('fs');
 var Html = (function () {
-    function Html(txt) {
-        var content = fs.readFileSync('module/htmlLayout.html','utf-8');
-        $ = cheerio.load(content);
-        $('h2').text('Hello there!');
-        $('h2').addClass('welcome');
-        
-        this.html = $.html();
-
+    function Html(tag, attributes, style, extend , text, parentid) {
+        this.tag = tag;
+        this.attributes = attributes;
+        this.style = style;
+        this.extend = extend;
+        this.text = text;
+        this.parentid = parentid;
     }
-    Html.prototype.findChild = function (type) {
-        for (var i = 0; i < this.children.length; i++) {
-            if (this.children[i].kind === type) {
-                return this.children[i];
-            }
+    Html.prototype.addAttributes = function (array) {
+        this.attributes = array.attributes;
+        this.style = array.style;
+        this.extend = array.extend;
+        this.text = array.text;
+    }
+
+    Html.prototype.addHtmlElementToDOM = function (currentDom) {
+        // console.log(elem);
+        var style;
+        // var attributes;
+        switch(this.tag){
+            case "div":
+                if (!!this.style) {
+                    style = "style='" + this.style + "' ";
+                }
+                currentDom.append("<div "
+                                    + (style || "") 
+                                    + (this.attributes || "") + ">" 
+                                    + (this.text || "") 
+                                    + "</div>");
+                break;
         }
-        return null;
-    };
-    Html.prototype.findChildren = function (type) {
-        return this.children.filter(function (child) { return child.kind === type; });
-    };
-    Html.prototype.getChildFrom = function (type) {
-        var child = this.findChild(type);
-        if (!child) {
-            return this.children.slice(0);
-        }
-        else {
-            var index = this.children.indexOf(child);
-            return this.children.slice(index + 1);
-        }
-    };
-    Html.prototype.getChildUntil = function (type) {
-        var child = this.findChild(type);
-        if (!child) {
-            return this.children.splice(0);
-        }
-        else {
-            var index = this.children.indexOf(child);
-            return this.children.slice(0, index);
-        }
-    };
+        return currentDom.children().last();
+    }
     return Html;
 })();
 module.exports = Html;

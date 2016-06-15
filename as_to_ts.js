@@ -38,7 +38,6 @@ function run(exchangeSource) {
     if (fs.existsSync(outputDir)) {
         if (!fs.statSync(outputDir).isDirectory()) {
             throw new Error('invalid ouput dir');
-            process.exit(1);
         }
         rimraf.sync(outputDir);
     }
@@ -73,13 +72,12 @@ function run(exchangeSource) {
         var outputFileName;
         var outputContent;
         if (isAs) {
-            outputFileName = file.replace(/.as$/i, '.ts');
+            outputFileName = file.replace(/.as$/i, '.html');
             // outputContent = emitter.emit(ast, content);
             outputContent = emitter.asth(ast);
         } else {
             outputFileName = file.replace(/.mxml$/i,'.html');
-            var obj = new htmlObj();
-            outputContent = obj.html;
+            outputContent = emitter.asth(ast, content);
         }
 
         fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);

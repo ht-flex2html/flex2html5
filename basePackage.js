@@ -1,5 +1,5 @@
 var NodeKind = require("./nodeKind");
-var plus = {
+var basePackage = {
     Alert:{
         MapFunction:function (node) {
            if (node.parent && node.parent.kind === NodeKind.DOT) {
@@ -18,4 +18,4 @@ var plus = {
         }
     }
 }
-module.exports = plus;
+module.exports = basePackage;
