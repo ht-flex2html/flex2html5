@@ -658,3 +658,99 @@ function consume(string, limit) {
     }
     state.index = index;
 }
+/*
+Convert AS To HTML
+*/
+function asth(ast, source, options) {
+    var class_node=ast.findChild(NodeKind.PACKAGE).findChild(NodeKind.CONTENT).findChild(NodeKind.CLASS);
+    var class_content_node=class_node.findChild(NodeKind.CONTENT);
+    var class_name=class_node.findChild(NodeKind.NAME).text;
+    
+    //return Elements
+    createHtmlElement(class_name,class_content_node);
+   
+   //addHtmlElementToDOM(Elements)
+   
+   //output document file
+    output = '';
+
+    return output;
+}
+
+function createHtmlElement(function_name,class_content_node){
+    function Element(tag, attributes, style, extend , text, parentid) {
+        this.tag = tag;
+        this.attributes =attributes;
+        this.style = style;
+        this.extend = extend;
+        this.text = text;
+        this.parentid = parentid;
+    }
+    //tag map file
+    var domTags = {BODY:"body",FORM:"form",DIV:"div"};
+    var paramTags={ID:"id",TITLE:"title",NAME:"name"};
+    var styleTags={WIDTH:"width",HEIGHT:"height"};
+    var extendTags={CLICK:"click",CUSTOMER:"customer"};//creationComplete To onload
+    var function_node=class_content_node.findFunctionByName(function_name);
+    var function_block=function_node.findChild("block");
+    var function_type=function_node.findchild(NodeKind.TYPE).text.toUpperCase();
+    //next function
+    var next_Function_block = null;
+    var tag,assignName,assignValue;
+    var argumentArray;
+
+    //判断是否含有var temp : Array 有则直接循环CreateEle 否则构建本身元素
+    if(function_type == "ARRAY"){
+        for(var subFunc in function_block.getFuncBlockTempArray()){
+            createHtmlElement(subFunc,class_content_node);
+        }
+    }else{
+        if(function_type.length>0 && domTags.hasOwnProperty(function_type)){
+              tag=function_type;//需转换MXML 为HTML 标签
+        }else{
+            tag="body";
+        }
+       if (domTags.hasOwnProperty(tag)) {
+            var HTMLElem=new Element(tag);
+            var attrArray = new Array();
+            var styleArray = new Array();
+             function_block.findChildren("assign").forEach(function(node) {
+                 assignName=node.getAssignName();
+                 assignValue=node.findChild("literal").text;
+                 
+                 if (styleTags.hasOwnProperty(assignName)) { 
+                     styleArray.push(assignName+":"+assignValue);
+                   }else if (paramTags.hasOwnProperty(assignName)) {
+                       paramTags.push(assignName+"='"+assignValue+"'");
+                  }else if(assignName=="mxmlContentFactory"){
+                      argumentArray=node.getArguments();
+                      if(argumentArray.length>1){
+                          next_Function_block=class_content_node.findFunctionByName(argumentArray[0]);
+                      }
+                      
+                  }
+             });
+            function_block.findChildren("call").forEach(function(node) {
+                assignName=node.getAssignName();
+                argumentArray=node.getArguments();
+                if(argumentArray.length>2){
+                    extendTags.push(argumentArray[0]+"="+argumentArray[1]);
+                }
+            });
+            HTMLElem.attributes=attrArray.join(" ");
+            HTMLElem.style=styleArray.join();
+            HTMLElem.extend=extendTags.join(" ");
+            
+            addHtmlElementToDOM(HTMLElem);
+            
+            if(next_Function_block != null){
+                createHtmlElement(next_Function_block)
+            }
+        }
+    }
+}
+
+function addHtmlElementToDOM(elem){
+    
+}
+exports.asth = asth;

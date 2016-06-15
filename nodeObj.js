@@ -12,7 +12,7 @@ var Node = (function () {
     }
     Node.prototype.findChild = function (type) {
         for (var i = 0; i < this.children.length; i++) {
-            if (this.children[i].kind === type) {
+            if (this.children[i] != null && this.children[i].kind === type) {
                 return this.children[i];
             }
         }
@@ -40,6 +40,43 @@ var Node = (function () {
             var index = this.children.indexOf(child);
             return this.children.slice(0, index);
         }
+    };
+     Node.prototype.findFunctionByName = function (name) {
+        for (var i = 0; i < this.findChildren("function").length; i++) {
+           if (this.findChildren("function")[i].findChild("name").text === name){
+                return this.findChildren("function")[i]; 
+           }
+       };
+        return null;
+    };
+    Node.prototype.getAssignName = function () {   
+        if(this.kind === "assign"){
+             return  this.findChild("dot").findChild("literal").text;
+        }
+       return  "";
+    };
+    Node.prototype.getArguments = function () {
+        var result = new Array();
+        var searchNode;
+        if(this.kind === "call"){
+             searchNode= this;
+        }else if(this.kind === "assign" && this.findChild("new")){
+            searchNode= this.findChild("new").findChild("call");
+        }
+        for(var child in searchNode.findChild("arguments").children){
+            result.push(child.text);
+        }
+       return result;
+    };
+     Node.prototype.getFuncBlockTempArray = function () {
+        var result = new Array();
+        if(this.kind === "block"){
+            var arrayNode=this.findChild("var-list").findChild("name-type-init").findChild("init").findChild("array");
+             for(var child in arrayNode.children){
+                result.push(child.findChild("identifier").text);
+            }
+        }
+       return result;
     };
     Object.defineProperty(Node.prototype, "lastChild", {
         get: function () {
