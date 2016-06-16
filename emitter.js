@@ -669,8 +669,15 @@ function asth(ast, source, options) {
    
    //addHtmlElementToDOM(Elements)
    
+   //add js to dom
+   var script_code=source.slice(source.indexOf("// scripts\r\n"),source.lastIndexOf("scripts\r\n"));
+   if(!script_code){
+       addJsCodeToDOM(script_code);
+   }
+   
    //output document file
-    output = '';
+   var obj = new htmlObj();
+   output =  obj.html;
 
     return output;
 }
@@ -696,16 +703,11 @@ function createHtmlElement(function_name,class_content_node){
     var next_Function, tag, assignName, assignValue;
     var argumentArray = [];
 
-    //判断是否含有var temp : Array 有则直接循环CreateEle 否则构建本身元素
+    //判断是否函数返回类型是否为Array 有则直接循环CreateEle 否则构建本身元素
     if(function_type == "ARRAY"){
-        // for(var subFunc in function_block.getFuncBlockTempArray()){
-        //     createHtmlElement(subFunc,class_content_node);
-        // }
         var subFuncArr = function_block.getFuncBlockTempArray();
         for(var i = 0; i < subFuncArr.length; i++){
-            // result.push(child.text);
             createHtmlElement(subFuncArr[i],class_content_node);
-            // result.push(subFuncArr[i].text);
         }
     } else {
         if(function_type.length>0 && domTags.hasOwnProperty(function_type)){
@@ -738,10 +740,10 @@ function createHtmlElement(function_name,class_content_node){
                 assignName=node.getAssignName();
                 argumentArray=node.getArguments();
                 if(argumentArray.length>2){
-                    if(argumentArray[0] && argumentArray[1])
-                        extendArray.push(null);
-                    else 
+                    if(!argumentArray[0] && !argumentArray[1]){
                         extendArray.push(argumentArray[0] + "=" + argumentArray[1]);
+                    }
+                        
                 }
             });
             HTMLElem.attributes=attrArray.join(" ");
@@ -759,5 +761,10 @@ function createHtmlElement(function_name,class_content_node){
 
 function addHtmlElementToDOM(elem){
     console.log(elem);
+}
+function addJsCodeToDOM(script){
+    //as to ts
+    //ts to js
+    //DOM.Head.add(js)
 }
 exports.asth = asth;

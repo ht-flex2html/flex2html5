@@ -68,12 +68,9 @@ var Node = (function () {
         }else if(this.kind === "assign" && this.findChild("new")){
             searchNode= this.findChild("new").findChild("call");
         }
-        // for(var child in searchNode.findChild("arguments").children){
-        //     result.push(child.text);
-        // }
+
         var arrArgs = searchNode.findChild("arguments").children;
         for(var i = 0; i < arrArgs.length; i++){
-            // result.push(child.text);
             result.push(arrArgs[i].text);
         }
        return result;
@@ -82,11 +79,7 @@ var Node = (function () {
         var result = new Array();
         if(this.kind === "block"){
             var arrayNode=this.findChild("var-list").findChild("name-type-init").findChild("init").findChild("array").children;
-            //  for(var child in arrayNode.children){
-            //     result.push(child.findChild("identifier").text);
-            // }
             for(var i = 0; i < arrayNode.length; i++){
-                // result.push(child.text);
                 result.push(arrayNode[i].findChild("identifier").text);
             }
         }

@@ -74,12 +74,10 @@ function run(exchangeSource) {
         var outputContent;
         if (isAs) {
             outputFileName = file.replace(/.as$/i, '.ts');
-            // outputContent = emitter.emit(ast, content);
-            outputContent = emitter.asth(ast);
+            outputContent = emitter.emit(ast, content);
         } else {
             outputFileName = file.replace(/.mxml$/i,'.html');
-            var obj = new htmlObj();
-            outputContent = obj.html;
+            outputContent = emitter.asth(ast, content);
         }
 
         fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);
