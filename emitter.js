@@ -687,6 +687,7 @@ function asth(ast, source, options) {
     //output document file
     //var obj = new htmlObj();
     //output =  obj.html;
+
     output = $.html();
     console.log($.html());
 
@@ -709,9 +710,9 @@ function createHtmlElement(function_name, class_content_node){
             createHtmlElement(subFuncArr[i], class_content_node);
         }
     } else {
-        if (function_type.length>0 && HtmlKind.domTags.hasOwnProperty(function_type)){
+        if(function_type.length>0 && HtmlKind.domTags.hasOwnProperty(function_type)){
               tag = function_type;//需转换MXML 为HTML 标签
-        } else {
+        }else{
             tag="div";
         }
        if (HtmlKind.domTags.hasOwnProperty(tag)) {
@@ -765,6 +766,16 @@ function createHtmlElement(function_name, class_content_node){
 
             currentDom = currentDom.parent();
         }
+    }
+}
+
+function addHtmlElementToDOM(elem){
+    switch(elem.tag){
+        case "div":
+            currentDom.append("<div>" + (elem.text || "") + "</div>");
+            // console.log($.html());
+            currentDom = currentDom.children().last();
+            break;
     }
 }
 function addJsCodeToDOM(script){
