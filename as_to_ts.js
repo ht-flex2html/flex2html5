@@ -78,8 +78,7 @@ function run(exchangeSource) {
             outputContent = emitter.asth(ast);
         } else {
             outputFileName = file.replace(/.mxml$/i,'.html');
-            var obj = new htmlObj();
-            outputContent = obj.html;
+            outputContent = emitter.asth(ast, content);
         }
 
         fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);

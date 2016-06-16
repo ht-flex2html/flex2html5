@@ -673,11 +673,19 @@ function asth(ast, source, options) {
     //return Elements
     createHtmlElement(class_name,class_content_node);
    
-   //addHtmlElementToDOM(Elements)
+    //addHtmlElementToDOM(Elements)
    
-   //output document file
-    output = '';
-
+    //add js to dom
+    var script_code=source.slice(source.indexOf("// scripts\r\n"),source.lastIndexOf("scripts\r\n"));
+   
+    if(!script_code){
+       addJsCodeToDOM(script_code);
+    }
+   
+    //output document file
+    var obj = new htmlObj();
+    output =  obj.html;
+    // output = "";
     console.log($.html());
 
     return output;
@@ -704,16 +712,15 @@ function createHtmlElement(function_name,class_content_node){
     var next_Function, tag, assignName, assignValue;
     var argumentArray = [];
 
-    //判断是否含有var temp : Array 有则直接循环CreateEle 否则构建本身元素
+    //判断是否函数返回类型是否为Array 有则直接循环CreateEle 否则构建本身元素
     if(function_type == "ARRAY"){
         var subFuncArr = function_block.getFuncBlockTempArray();
         for(var i = 0; i < subFuncArr.length; i++){
             createHtmlElement(subFuncArr[i], class_content_node);
-            // currentDom = currentDom.parent();
         }
     } else {
-        if(function_type.length > 0 && domTags.hasOwnProperty(function_type)){
-              tag=function_type;//需转换MXML 为HTML 标签
+        if(function_type.length>0 && domTags.hasOwnProperty(function_type)){
+              tag = function_type;//需转换MXML 为HTML 标签
         }else{
             tag="div";
         }
@@ -746,6 +753,9 @@ function createHtmlElement(function_name,class_content_node){
                         extendArray.push(null);
                     else 
                         extendArray.push(argumentArray[0] + "=" + argumentArray[1]);
+                    if(!argumentArray[0] && !argumentArray[1]){
+                        extendArray.push(argumentArray[0] + "=" + argumentArray[1]);
+                    }
                 }
             });
             HTMLElem.attributes=attrArray.join(" ");
@@ -766,10 +776,15 @@ function addHtmlElementToDOM(elem){
     switch(elem.tag){
         case "div":
             currentDom.append("<div>" + (elem.text || "") + "</div>");
-            console.log($.html());
+            // console.log($.html());
             currentDom = currentDom.children().last();
             break;
     }
+}
+function addJsCodeToDOM(script){
+    //as to ts
+    //ts to js
+    //DOM.Head.add(js)
 }
 exports.asth = asth;
 
