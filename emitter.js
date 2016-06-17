@@ -770,7 +770,6 @@ function createHtmlElement(function_name, class_content_node){
         }
     }
 }
-
 function addJsCodeToDOM(script){
     //as to ts
     //ts to js
