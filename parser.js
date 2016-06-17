@@ -45,8 +45,8 @@ function startsWith(string, prefix) {
 ;
 function endsWith(string, suffix) {
     return string.indexOf(suffix, string.length - suffix.length) !== -1;
-}
-;
+};
+
 var CARRIAGE_RETURN = 13, LINE_FEED = 10, LINE_SEPARATOR = 0x2028, PARAGRAPH_SEPARATOR = 0x2029, NEXT_LINE = 0x0085;
 function isAnyLineBreakCharacter(c) {
     return c === LINE_FEED || c === CARRIAGE_RETURN || c === NEXT_LINE || c === LINE_SEPARATOR || c === PARAGRAPH_SEPARATOR;

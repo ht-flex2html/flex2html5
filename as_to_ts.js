@@ -76,7 +76,7 @@ function run(exchangeSource) {
             // outputContent = emitter.emit(ast, content);
             outputContent = emitter.asth(ast);
         } else {
-            outputFileName = file.replace(/.mxml$/i,'.html');
+            outputFileName = file.replace(/.mxml$/i, '.html');
             outputContent = emitter.asth(ast, content);
         }
 

@@ -724,9 +724,14 @@ function createHtmlElement(function_name, class_content_node){
             
             function_block.findChildren("assign").forEach(function(node) {
                 assignName = node.getAssignName().toUpperCase();
-                assignValue = node.findChild("literal")? node.findChild("literal").text : null;
+                assignValue = node.findChild("literal")? node.findChild("literal").text : node.findChild("literal");
 
                 if (HtmlKind.styleTags.hasOwnProperty(assignName)) { 
+                    if(assignName == "HORIZONTALCENTER"){
+                        assignValue = HTMLElem.parseHorizontal(currentDom, parseInt(assignValue || 0));
+                    } else if (assignName == "VERTICALCENTER"){
+                        assignValue = HTMLElem.parseVertical(currentDom, parseInt(assignValue || 0));
+                    }
                     styleArray.push(HtmlKind.styleTags[assignName] + ":" + assignValue + "px");
                 } else if (HtmlKind.paramTags.hasOwnProperty(assignName)) {
                     paramTagsArray.push(assignName + "=" + assignValue);
@@ -746,7 +751,7 @@ function createHtmlElement(function_name, class_content_node){
                         extendArray.push(null);
                     else 
                         extendArray.push(argumentArray[0] + "=" + argumentArray[1]);
-                    if(!argumentArray[0] && !argumentArray[1]){
+                    if (!argumentArray[0] && !argumentArray[1]) {
                         extendArray.push(argumentArray[0] + "=" + argumentArray[1]);
                     }
                 }
@@ -770,7 +775,6 @@ function createHtmlElement(function_name, class_content_node){
         }
     }
 }
-
 function addJsCodeToDOM(script){
     //as to ts
     //ts to js

@@ -39,6 +39,25 @@ var Html = (function () {
                             
         return currentDom.children().last();
     }
+
+    Html.prototype.parseHorizontal = function (dom, value) {
+        var parentWidth = dom.parent().css("width").replace("px","");
+
+        if(!!parentWidth)
+            parentWidth = parseInt(parentWidth) * 0.5;
+        
+        return value + parentWidth;
+    }
+
+    Html.prototype.parseVertical = function (dom, value) {
+        var parentHeigth = dom.parent().css("height").replace("px","");
+        
+        if(!!parentHeigth)
+            parentHeigth = parseInt(parentHeigth) * 0.5;
+
+        return value + parentHeigth;
+    }
+
     return Html;
 })();
 module.exports = Html;
