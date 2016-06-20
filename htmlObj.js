@@ -9,6 +9,7 @@ var Html = (function () {
         this.text = text;
         this.parentid = parentid;
     }
+
     Html.prototype.addAttributes = function (array) {
         this.attributes = array.attributes;
         this.style = array.style;
@@ -19,19 +20,23 @@ var Html = (function () {
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
         // console.log(elem);
         var style;
-        // var attributes;
+
         switch(this.tag){
-            case "div":
-                if (!!this.style) {
-                    style = "style='" + this.style + "' ";
-                }
-                currentDom.append("<div "
-                                    + (style || "") 
-                                    + (this.attributes || "") + ">" 
-                                    + (this.text || "") 
-                                    + "</div>");
+            case "button":
+            case "label":
+                this.text = "test";
                 break;
         }
+
+        if (!!this.style) {
+            style = "style='" + this.style + "' ";
+        }
+        currentDom.append("<"+ this.tag + " "
+                            + (style || "") 
+                            + (this.attributes || "") + ">" 
+                            + (this.text || "") 
+                            + "</" + this.tag +">");
+                            
         return currentDom.children().last();
     }
     return Html;

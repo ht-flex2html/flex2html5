@@ -674,7 +674,6 @@ function asth(ast, source, options) {
     
     //return Elements
     createHtmlElement(class_name,class_content_node);
-   
     //addHtmlElementToDOM(Elements)
    
     //add js to dom
@@ -710,25 +709,27 @@ function createHtmlElement(function_name, class_content_node){
             createHtmlElement(subFuncArr[i], class_content_node);
         }
     } else {
-        if(function_type.length>0 && HtmlKind.domTags.hasOwnProperty(function_type)){
-              tag = function_type;//需转换MXML 为HTML 标签
-        }else{
-            tag="div";
+        if (function_type.length > 0 && HtmlKind.domTags.hasOwnProperty(function_type)) {
+            tag = HtmlKind.domTags[function_type];//需转换MXML 为HTML 标签
+        } else {
+            function_type = "DIV";
+            tag = "div";
         }
-       if (HtmlKind.domTags.hasOwnProperty(tag)) {
+       if (HtmlKind.domTags.hasOwnProperty(function_type)) {
             var HTMLElem = new Html(tag);
             var styleArray = new Array();
             var extendArray = new Array();
             var paramTagsArray = new Array();
             
             function_block.findChildren("assign").forEach(function(node) {
-                assignName = node.getAssignName();
+                assignName = node.getAssignName().toUpperCase();
                 assignValue = node.findChild("literal")? node.findChild("literal").text : null;
+
                 if (HtmlKind.styleTags.hasOwnProperty(assignName)) { 
-                    styleArray.push(assignName + ":" + assignValue + "px");
+                    styleArray.push(HtmlKind.styleTags[assignName] + ":" + assignValue + "px");
                 } else if (HtmlKind.paramTags.hasOwnProperty(assignName)) {
                     paramTagsArray.push(assignName + "=" + assignValue);
-                } else if (assignName == "mxmlContentFactory") {
+                } else if (assignName == "mxmlContentFactory".toUpperCase()) {
                     argumentArray=node.getArguments();
                     if(argumentArray.length > 0){
                         next_Function = argumentArray[0];
@@ -768,15 +769,6 @@ function createHtmlElement(function_name, class_content_node){
         }
     }
 }
-
-function addHtmlElementToDOM(elem){
-    switch(elem.tag){
-        case "div":
-            currentDom.append("<div>" + (elem.text || "") + "</div>");
-            // console.log($.html());
-            currentDom = currentDom.children().last();
-            break;
-    }
 }
 function addJsCodeToDOM(scripts,class_name){
 

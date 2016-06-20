@@ -1,7 +1,29 @@
-var HtmlKind = {
-    domTags : {body:"body",form:"form",div:"div"},
-    paramTags : {id:"id",title:"title",name:"name"},
-    styleTags : {width:"width",height:"height"},
+var HtmlKind = { 
+
+    domTags : {
+        DIV:"div",
+        PANEL: "form", 
+        LABEL: "label", 
+        TEXTINPUT: "input", 
+        COMBOBOX: "select", 
+        BUTTON: "button",
+        DATAGRID: "table"
+    },
+
+    paramTags : {
+        ID:"id",
+        TITLE:"title",
+        NAME:"name"
+    },
+
+    styleTags : {
+        WIDTH: "width",
+        HEIGHT: "height",
+        TOP: "top",
+        HORIZONTALCENTER: "left",
+        VERTICALCENTER: "top"
+    },
+
     extendTags : {click:"click",customer:"customer"}
 }
 module.exports = HtmlKind;
