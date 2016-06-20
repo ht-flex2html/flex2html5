@@ -769,7 +769,6 @@ function createHtmlElement(function_name, class_content_node){
         }
     }
 }
-}
 function addJsCodeToDOM(scripts,class_name){
 
     //as to js
