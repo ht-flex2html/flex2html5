@@ -678,11 +678,11 @@ function asth(ast, source, options) {
     //addHtmlElementToDOM(Elements)
    
     //add js to dom
-    //var script_code=source.slice(source.indexOf("// scripts\r\n"),source.lastIndexOf("scripts\r\n"));
+    //var script_code=source.slice(source.indexOf("//  scripts\r\n"),source.lastIndexOf("//  end scripts\r\n"));
    
-    //if(!script_code){
-    //    addJsCodeToDOM(script_code);
-    //}
+    // if(script_code.length > 0){
+    //    addJsCodeToDOM(script_code,class_name);
+    // }
    
     //output document file
     //var obj = new htmlObj();
@@ -778,11 +778,22 @@ function addHtmlElementToDOM(elem){
             break;
     }
 }
-function addJsCodeToDOM(script){
-    //as to ts
+function addJsCodeToDOM(scripts,class_name){
+
+    //as to js
+    var AS3Convert = require('./parser');
+    var path = require('path');
+    var convert = new AS3Convert();
+    var tsnode= convert.buildAst(path.basename(class_name+".as"), scripts);
+    var tscode= emit(tsnode, scripts);
+    
+    var fs = require("fs");
+    fs.createFileSync(path.resolve("..//js_output/"+class_name+".ts"), tscode);
     //ts to js
+    
     //DOM.Head.add(js)
 }
+
 exports.asth = asth;
 
 
