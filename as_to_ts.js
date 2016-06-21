@@ -5,6 +5,7 @@ var path = require('path');
 require('fs-extended');
 var rimraf = require('rimraf');
 var fs = require("fs");
+var XMLParser = require("./xmlParser");
 var htmlObj = require("./htmlObj");
 function flatten(arr) {
     return arr.reduce(function (result, val) {
@@ -56,7 +57,7 @@ function run(exchangeSource) {
             isAs = false;
         }
         
-        var parser = new AS3Parser();
+        var parser;
         // console.log('compiling \'' + file + '\' ' + number + '/' + length);
         var content = fs.readFileSync(path.resolve(sourceDir, file), 'UTF-8');
         var world = content;
@@ -67,17 +68,19 @@ function run(exchangeSource) {
         asAccount.classNum += test.match(/class/gm) && test.match(/class/gm).length || 0;
 
         // console.log(content);
-        var ast = parser.buildAst(path.basename(file), content);
 
         var outputFileName;
         var outputContent;
         if (isAs) {
-            outputFileName = file.replace(/.as$/i, '.html');
-            // outputContent = emitter.emit(ast, content);
-            outputContent = emitter.asth(ast);
-        } else {
-            outputFileName = file.replace(/.mxml$/i, '.html');
-            outputContent = emitter.asth(ast, content);
+            parser = new AS3Parser();
+            var ast = parser.buildAst(path.basename(file), content);
+            outputFileName = file.replace(/.as$/i, '.ts');
+            outputContent = emitter.emit(ast, content);
+        } else {            
+            parser = new XMLParser(content);
+            outputFileName = file.replace(/.mxml$/i,'.html');
+            outputContent = parser.outStream();
+            console.log(outputContent);
         }
 
         fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);

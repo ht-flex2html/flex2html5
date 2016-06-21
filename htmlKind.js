@@ -2,12 +2,14 @@ var HtmlKind = {
 
     domTags : {
         DIV:"div",
-        PANEL: "form", 
+        PANEL: "div", 
         LABEL: "label", 
         TEXTINPUT: "input", 
         COMBOBOX: "select", 
         BUTTON: "button",
-        DATAGRID: "table"
+        DATAGRID: "table",
+        DATAGRIDCOLUMN:"tr",
+        APPLICATION:"form"
     },
 
     paramTags : {

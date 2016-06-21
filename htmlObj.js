@@ -1,6 +1,8 @@
 var cheerio = require('cheerio');
 var fs = require('fs');
 var Html = (function () {
+    var content = "";
+    var $ = null;
     function Html(tag, attributes, style, extend , text, parentid) {
         this.tag = tag;
         this.attributes = attributes;
@@ -19,6 +21,11 @@ var Html = (function () {
 
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
         // console.log(elem);
+        if(!currentDom){
+            content = fs.readFileSync('module/htmlLayout.html','utf-8');
+            $ = cheerio.load(content);
+            currentDom = $("body");
+        }
         var style;
 
         switch(this.tag){
@@ -41,8 +48,10 @@ var Html = (function () {
     }
 
     Html.prototype.parseHorizontal = function (dom, value) {
-        var parentWidth = dom.parent().css("width").replace("px","");
-
+        var parentWidth = dom.css("width").replace("px","");
+        
+        if(typeof value != "number")
+            value = parseInt(value);
         if(!!parentWidth)
             parentWidth = parseInt(parentWidth) * 0.5;
         
@@ -50,14 +59,24 @@ var Html = (function () {
     }
 
     Html.prototype.parseVertical = function (dom, value) {
-        var parentHeigth = dom.parent().css("height").replace("px","");
-        
+        var parentHeigth = dom.css("height").replace("px","");
+
+        if(typeof value != "number")
+            value = parseInt(value);
         if(!!parentHeigth)
             parentHeigth = parseInt(parentHeigth) * 0.5;
 
         return value + parentHeigth;
     }
 
+    
+    Html.prototype.addScriptLink= function (filePath) {
+        
+    }
+
+    Html.prototype.outStream= function () {
+        return $.html();
+    }
     return Html;
 })();
 module.exports = Html;
