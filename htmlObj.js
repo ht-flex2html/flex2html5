@@ -19,6 +19,11 @@ var Html = (function () {
 
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
         // console.log(elem);
+        if(!currentDom){
+            var content = fs.readFileSync('module/htmlLayout.html','utf-8');
+            $ = cheerio.load(content);
+            currentDom = $("body");
+        }
         var style;
 
         switch(this.tag){
@@ -38,6 +43,13 @@ var Html = (function () {
                             + "</" + this.tag +">");
                             
         return currentDom.children().last();
+    }
+    
+    Html.prototype.addScriptLink= function (filePath) {
+        
+    }
+    Html.prototype.outStream= function () {
+        return $.html();
     }
     return Html;
 })();

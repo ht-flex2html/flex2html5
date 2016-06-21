@@ -7,7 +7,8 @@ var HtmlKind = {
         TEXTINPUT: "input", 
         COMBOBOX: "select", 
         BUTTON: "button",
-        DATAGRID: "table"
+        DATAGRID: "table",
+        DATAGRIDCOLUMN:"tr"
     },
 
     paramTags : {
