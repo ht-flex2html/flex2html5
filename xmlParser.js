@@ -18,7 +18,7 @@ var defindLog = "defind_";
 
 var XMLParser = (function () {
     function XMLParser(content) {
-        content=content.replace(/\r\n/g,"").replace(/\n/g,"");
+        //content=content.replace(/\r\n/g,"").replace(/\n/g,"");
         this.parser = new Sax.parser(false);
         
         this.parser.onopentag = function (tag) {
@@ -111,13 +111,19 @@ var XMLParser = (function () {
                 }
             }
             if (tagName == rootTag.name.replace(reg,"") && scriptBuffer.toString().length >0) {
-              //TODO:将script 生成到文件
+                //将script 生成到文件
                 var class_name = "test";
                 var fs = require("fs");
                 var path = require('path');
                 var filePath = scriptDir + class_name + ".as";
-                fs.createFileSync(path.resolve(filePath), scriptBuffer.toString());
+                var scripts=scriptBuffer.toString();
+                fs.createFileSync(path.resolve(filePath),scripts );
                 Html.addScriptLink(filePath);
+                //在Html页面中保留引用信息,方便后续修改
+                var linkInfo=scripts.match(/import\s\S*;/g).join("\r\n");
+                if(linkInfo){
+                    Html.addImportInfo(linkInfo);
+                }
             }
         }
         

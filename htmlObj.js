@@ -13,9 +13,11 @@ var Html = (function () {
     }
 
     Html.addScriptLink= function (filePath) {
-        $("head").append("<script type='text/javascript' src='" + filePath + "'></script>");
+        $("head").append("<script type='text/javascript' src='" + filePath + "'></script>\r\n");
     }
-
+    Html.addImportInfo =function (info) {
+        $("head").append("<script>\r\n/*\r\n"+info+"\r\n*/\r\n</script>\r\n");
+    }
     Html.outStream= function () {
         return $.html();
     }
@@ -29,7 +31,6 @@ var Html = (function () {
     }
 
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
-        // console.log(elem);
         if(!currentDom){
             content = fs.readFileSync('module/htmlLayout.html','utf-8');
             $ = cheerio.load(content);
@@ -37,20 +38,9 @@ var Html = (function () {
         }
         var style;
 
-        switch(this.tag){
-            case "label":
-                // this.text = ;
-                break;
-        }
-
         if (!!this.style) {
             style = "style='" + this.style + "' ";
         }
-
-        if(this.tag == "tr"){
-            console.log(1);
-        }
-
         currentDom.append("<" + this.tag + " "
                             + (style || "")
                             + (this.extend || "") + " "
