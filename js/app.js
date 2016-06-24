@@ -39,23 +39,32 @@
 //         $("#preview").html(str);
 //     });
 // }); 
-function UploadFile(){
-   
-    var getDir = function(disc,dir){
-        var str;
-        if($("#" + disc).val() == 'other'){
-            str = $("#" + dir).val();
-        } else {
-            str = $("#" + disc).val() +　$("#" + dir).val();
-        }
-        return str;
-    }
 
-    // var formData = new FormData($("#submit")[0]);
-    var input = getDir("discInput", "sourceDir");
-    // var output = getDir("discOutput","outputDir");
-    var changeData = {operation:"PARSE_MXML", sourceDir:input};
-    console.log(changeData);
+function getDir (){
+    return $("#filedir").val();
+}
+
+
+function createDir (){
+    var input = getDir();
+    var changeData = {operation:"MK_DIR", sourceDir: input};
+    UploadFile(changeData);
+}
+
+function parseMXML (){
+    var input = getDir();
+    var changeData = {operation:"PARSE_MXML", sourceDir: input};
+    UploadFile(changeData);
+}
+
+function parseAS (){
+    var input = getDir();
+    var changeData = {operation:"PARSE_AS", sourceDir: input};
+    UploadFile(changeData);
+}
+
+
+function UploadFile(changeData){
     $.ajax({
         url: '/upload',
         type: 'post',

@@ -1,6 +1,8 @@
 var cheerio = require('cheerio');
 var fs = require('fs');
 var Html = (function () {
+    var content = "";
+    var $ = null;
     Html.content = "";
     Html.$ = null;
     function Html(tag, attributes, style, extend , text, parentid) {
@@ -12,10 +14,13 @@ var Html = (function () {
         this.parentid = parentid;
     }
 
-    Html.addScriptLink= function (filePath) {
-        $("head").append("<script type='text/javascript' src='" + filePath + "'></script>");
-    }
 
+    Html.addScriptLink= function (filePath) {
+        $("head").append("<script type='text/javascript' src='" + filePath + "'></script>\r\n");
+    }
+    Html.addImportInfo =function (info) {
+        $("head").append("<script>\r\n/*\r\n"+info+"\r\n*/\r\n</script>\r\n");
+    }
     Html.outStream= function () {
         return $.html();
     }
@@ -36,32 +41,19 @@ var Html = (function () {
             currentDom = $("body");
         }
         var style;
-
-        switch(this.tag){
-            case "label":
-                // this.text = ;
-                break;
-        }
-
         if (!!this.style) {
             style = "style='" + this.style + "' ";
         }
-
-        if(this.tag == "tr"){
-            console.log(1);
-        }
-
         currentDom.append("<" + this.tag + " "
                             + (style || "")
                             + (this.extend || "") + " "
                             + (this.attributes || "") + ">" 
                             + (this.text || "") 
-                            + "</" + this.tag + ">");
+                            + "</" + this.tag +">");
                             
         return currentDom.children().last();
     }
+    
     return Html;
 })();
-
-
 module.exports = Html;

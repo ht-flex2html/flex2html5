@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=utf-8></meta>
+	<title>Flex2HTML5</title>
+	<link href="css/bootstrap.css" rel="stylesheet">
+	<link href="css/base.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	<script type="text/javascript" src="js/jquery.2.2.1.js"></script>
+	<script type="text/javascript" src="js/bootstrap.js"></script>
+	<script type="text/javascript" src="js/page.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+</head>
+<body>
+	<div class="contain">
+        <h1>Flex To HTML5</h1>
+        <h2>简介:通过代码转换,实现Flex源码到HTML5的转换.</h2>
+        <div class="text-left">
+            <p class="lead">Step 1:选择Flex项目文件夹
+                <div class="input-append">
+                    <input id="filedir" placeholder="请输入文件夹路径" class="input-large" type="text" style="height:30px;width:400px;float:left;">
+                    <a class="btn btn-success btn-sm" style="float:left;" onclick="createDir()">生成转换目录</a>
+                </div>
+            </p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>文件类型</th>
+                        <th>文件数量</th>
+                        <th>目录数量</th>
+                    </tr>
+                </thead>
+            </table> 
+        </div>
+        <div class="text-left">
+            <p class="lead">Step 2:Flex项目页面文件转换<br/>
+               <button onclick="parseMXML();return false;" class="btn btn-success mt10">开始MXML文件转换</button>
+            </p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>文件数量</th>
+                        <th>成功数量</th>
+                        <th>失败数量</th>
+                        <th>生成AS文件数量</th>
+                    </tr>
+                </thead>
+            </table> 
+        </div>
+        <div class="text-left">
+            <p class="lead">Step 3:Flex项目AS代码转换<br/>
+               <button onclick="parseAS();return false;" class="btn btn-success mt10">开始AS代码转换</button>
+            </p>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>文件数量</th>
+                        <th>成功数量</th>
+                        <th>失败数量</th>
+                    </tr>
+                </thead>
+            </table> 
+        </div>
+        <div class="text-left">
+            <p class="lead">Step 4:转换后项目编译</p>
+            <p class="lead">Step 5:编译错误处理</p>
+        </div>
+    </div>
+    
+</body>
+</html>

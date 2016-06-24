@@ -7,7 +7,7 @@ var path = require('path');
 var rimraf = require('rimraf');
 
 function start(response,request,pathname){
-    fs.readFile("demo.html",function(error, data) {
+    fs.readFile("index.html",function(error, data) {
         if(error){  
             console.log(error);  
         }else{  
@@ -44,9 +44,7 @@ function upload(response,request,pathname) {
         var sourceDir = data.sourceDir;
         var rootDir = path.resolve(process.cwd(), "output");
 
-        if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-            throw new Error('invalid source dir');
-        }
+        
         //生成目录操作和翻译操作
         if(data.operation === "MK_DIR"){
             if (fs.existsSync(rootDir)) {
@@ -55,11 +53,14 @@ function upload(response,request,pathname) {
                 }
                 rimraf.sync(rootDir);
             }
-            fs.mkdirSync(rootDir);
-
+			fs.mkdirSync(rootDir);
             mkDir(sourceDir, rootDir);
 
         } else if (data.operation === "PARSE_MXML" || data.operation === "PARSE_AS") {
+            if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
+                throw new Error('invalid source dir');
+            }
+
             asAcountResult = as_to_ts.run(sourceDir, rootDir, data.operation);
 
             responseData.anlyiseNum = {
@@ -83,10 +84,9 @@ function upload(response,request,pathname) {
 
 function mkDir(sourcePath, rootDir){
 	var dirList = fs.readdirSync(sourcePath);
-
 	dirList.forEach(function(file){
-		if (fs.statSync(sourcePath + '/' + file).isDirectory()) {
-            var mkDirName = rootDir + '/' + file;
+		if (fs.statSync(sourcePath + '\\' + file).isDirectory()) {
+            var mkDirName = rootDir + '\\' + file;
             if (fs.existsSync(mkDirName)) {
                 if (!fs.statSync(mkDirName).isDirectory()) {
                     throw new Error('invalid ouput dir');
@@ -94,7 +94,7 @@ function mkDir(sourcePath, rootDir){
                 rimraf.sync(mkDirName);
             }
             fs.mkdirSync(mkDirName);
-			mkDir(sourcePath + "/" + file, mkDirName);
+			mkDir(sourcePath + "\\" + file, mkDirName);
 		}
 	});
 }

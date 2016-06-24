@@ -7,7 +7,6 @@ var rimraf = require('rimraf');
 var fs = require("fs");
 var XMLParser = require("./xmlParser");
 var htmlObj = require("./htmlObj");
-var operatorKind = require("./operatorKind");
 function flatten(arr) {
     return arr.reduce(function (result, val) {
         if (Array.isArray(val)) {
@@ -79,16 +78,17 @@ function run(sourceDir, outputDir, parseType) {
         
         switch (parseType) {
             case "PARSE_MXML":
-                parseAS();
-                break;
-            case "PARSE_AS":
                 parseMXML();
                 break;
+            case "PARSE_AS":
+                parseAS();
+                break;
         }
-
-
-
-        fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);
+        var outputFilePath = path.resolve(outputDir, outputFileName);
+        if (fs.existsSync(outputFilePath)) {
+                rimraf.sync(outputFilePath);
+        }
+        fs.createFileSync(outputFilePath, outputContent);
     });
     return asAccount;
 }
