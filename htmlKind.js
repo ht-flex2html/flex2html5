@@ -8,14 +8,18 @@ var HtmlKind = {
         COMBOBOX: "select", 
         BUTTON: "button",
         DATAGRID: "table",
-        DATAGRIDCOLUMN:"tr",
-        APPLICATION:"form"
+        COLUMNS: "tr",
+        DATAGRIDCOLUMN:"td",
+        APPLICATION:"form",
     },
 
-    paramTags : {
+    attrTags : {
         ID:"id",
         TITLE:"title",
-        NAME:"name"
+        NAME:"name",
+        LABEL:"text",
+        TEXT:"text",
+        HEADERTEXT:"text"
     },
 
     styleTags : {
@@ -23,9 +27,13 @@ var HtmlKind = {
         HEIGHT: "height",
         TOP: "top",
         HORIZONTALCENTER: "left",
-        VERTICALCENTER: "top"
+        VERTICALCENTER: "top",
+        VISIBLE: "display"
     },
 
-    extendTags : {click:"click",customer:"customer"}
+    extendTags : {
+        CLICK:"onclick",
+        CUSTOMER:"customer"
+    }
 }
 module.exports = HtmlKind;
