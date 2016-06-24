@@ -3,3 +3,4 @@
 * Next step:add alert map
 * plus index upldate
 * Update xmlParser
+* next step dir create
