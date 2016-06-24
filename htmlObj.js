@@ -1,8 +1,8 @@
 var cheerio = require('cheerio');
 var fs = require('fs');
 var Html = (function () {
-    var content = "";
-    var $ = null;
+    Html.content = "";
+    Html.$ = null;
     function Html(tag, attributes, style, extend , text, parentid) {
         this.tag = tag;
         this.attributes = attributes;
@@ -11,6 +11,15 @@ var Html = (function () {
         this.text = text;
         this.parentid = parentid;
     }
+
+    Html.addScriptLink= function (filePath) {
+        $("head").append("<script type='text/javascript' src='" + filePath + "'></script>");
+    }
+
+    Html.outStream= function () {
+        return $.html();
+    }
+
 
     Html.prototype.addAttributes = function (array) {
         this.attributes = array.attributes;
@@ -29,54 +38,30 @@ var Html = (function () {
         var style;
 
         switch(this.tag){
-            case "button":
             case "label":
-                this.text = "test";
+                // this.text = ;
                 break;
         }
 
         if (!!this.style) {
             style = "style='" + this.style + "' ";
         }
-        currentDom.append("<"+ this.tag + " "
-                            + (style || "") 
+
+        if(this.tag == "tr"){
+            console.log(1);
+        }
+
+        currentDom.append("<" + this.tag + " "
+                            + (style || "")
+                            + (this.extend || "") + " "
                             + (this.attributes || "") + ">" 
                             + (this.text || "") 
-                            + "</" + this.tag +">");
+                            + "</" + this.tag + ">");
                             
         return currentDom.children().last();
     }
-
-    Html.prototype.parseHorizontal = function (dom, value) {
-        var parentWidth = dom.css("width").replace("px","");
-        
-        if(typeof value != "number")
-            value = parseInt(value);
-        if(!!parentWidth)
-            parentWidth = parseInt(parentWidth) * 0.5;
-        
-        return value + parentWidth;
-    }
-
-    Html.prototype.parseVertical = function (dom, value) {
-        var parentHeigth = dom.css("height").replace("px","");
-
-        if(typeof value != "number")
-            value = parseInt(value);
-        if(!!parentHeigth)
-            parentHeigth = parseInt(parentHeigth) * 0.5;
-
-        return value + parentHeigth;
-    }
-
-    
-    Html.prototype.addScriptLink= function (filePath) {
-        
-    }
-
-    Html.prototype.outStream= function () {
-        return $.html();
-    }
     return Html;
 })();
+
+
 module.exports = Html;

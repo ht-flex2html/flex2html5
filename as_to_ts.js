@@ -7,6 +7,7 @@ var rimraf = require('rimraf');
 var fs = require("fs");
 var XMLParser = require("./xmlParser");
 var htmlObj = require("./htmlObj");
+var operatorKind = require("./operatorKind");
 function flatten(arr) {
     return arr.reduce(function (result, val) {
         if (Array.isArray(val)) {
@@ -18,6 +19,7 @@ function flatten(arr) {
         return result;
     }, []);
 }
+
 function readdir(dir, prefix) {
     if (prefix === void 0) { prefix = ''; }
     return flatten(fs.readdirSync(dir).map(function (file) {
@@ -26,39 +28,30 @@ function readdir(dir, prefix) {
         return fs.statSync(filePath).isDirectory() ? readdir(filePath, fileName) : fileName;
     }));
 }
+
 function displayHelp() {
     console.log('usage: as3-to-typescript <sourceDir> <outputDir>');
 }
-function run(exchangeSource) {
-    var sourceDir = exchangeSource.sourceDir;
-    if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
-        throw new Error('invalid source dir');
+
+function run(sourceDir, outputDir, parseType) {
+    var fileReg;
+    switch (parseType) {
+        case "PARSE_AS":
+            fileReg = /.as$/;
+            break;
+        case "PARSE_MXML":
+            fileReg = /.mxml$/;
+            break;
     }
 
-    var outputDir = exchangeSource.outputDir;
-    if (fs.existsSync(outputDir)) {
-        if (!fs.statSync(outputDir).isDirectory()) {
-            throw new Error('invalid ouput dir');
-        }
-        rimraf.sync(outputDir);
-    }
-
-    fs.mkdirSync(outputDir);
     var files = readdir(sourceDir).filter(function (file) { 
-        return /.as$/.test(file) || /.mxml$/.test(file); 
+        return fileReg.test(file);
     });
-
-    // var number = 0;
+    
     var length = files.length;
     var asAccount = {functionNum:0,interfaceNum:0,classNum:0};
     files.forEach(function (file) {
-        var isAs = true; 
-        if(/.mxml$/i.test(file)){
-            isAs = false;
-        }
-        
         var parser;
-        // console.log('compiling \'' + file + '\' ' + number + '/' + length);
         var content = fs.readFileSync(path.resolve(sourceDir, file), 'UTF-8');
         var world = content;
         var test = world.replace(/\/\*\*[\s\S]*\*\//gm,"").replace(/\/\/(.*)/gm,"");
@@ -67,24 +60,35 @@ function run(exchangeSource) {
         asAccount.interfaceNum += test.match(/interface/gm) && test.match(/interface/gm).length || 0;
         asAccount.classNum += test.match(/class/gm) && test.match(/class/gm).length || 0;
 
-        // console.log(content);
-
         var outputFileName;
         var outputContent;
-        if (isAs) {
+        
+        var parseAS = function () {
             parser = new AS3Parser();
             var ast = parser.buildAst(path.basename(file), content);
             outputFileName = file.replace(/.as$/i, '.ts');
             outputContent = emitter.emit(ast, content);
-        } else {            
+        }
+
+        var parseMXML = function () {
             parser = new XMLParser(content);
             outputFileName = file.replace(/.mxml$/i,'.html');
             outputContent = parser.outStream();
             console.log(outputContent);
         }
+        
+        switch (parseType) {
+            case "PARSE_MXML":
+                parseAS();
+                break;
+            case "PARSE_AS":
+                parseMXML();
+                break;
+        }
+
+
 
         fs.createFileSync(path.resolve(outputDir, outputFileName), outputContent);
-        // number++;
     });
     return asAccount;
 }

@@ -40,36 +40,7 @@
 //     });
 // }); 
 function UploadFile(){
-    var getTree = function (parentSub,parentFiles,parentName){
-         var str="";
-         str += "<li><a>" + parentName + "</a>";
-
-         if(parentFiles.length > 0){//一级
-              str += "<ul>";
-              for(var i = 0; i < parentFiles.length; i++){
-                str+="<li><a>"+parentFiles[i]+"</a></li>"
-              }
-         }
-         if(parentSub.length > 0){
-              if(parentFiles.length <= 0 && parentSub.length > 0){
-                str += "<ul>";
-              }
-              for(var j=0; j < parentSub.length; j++){
-                var name=parentSub[j].name;
-                var sub=parentSub[j].sub;
-                var files=parentSub[j].files;
-                str+="<li><a>"+getTree(sub,files,name)+"</a></li>";
-              }
-         }
-
-         if(parentSub.length > 0 || parentFiles.length > 0){
-            str+="</ul></li>";
-         } else {
-            str+="</li>";
-         }
-         return str;
-    }
-
+   
     var getDir = function(disc,dir){
         var str;
         if($("#" + disc).val() == 'other'){
@@ -81,10 +52,9 @@ function UploadFile(){
     }
 
     // var formData = new FormData($("#submit")[0]);
-    var input = getDir("discInput","sourceDir");
-    var output = getDir("discOutput","outputDir");
-
-    var changeData = {sourceDir:input,outputDir:output};
+    var input = getDir("discInput", "sourceDir");
+    // var output = getDir("discOutput","outputDir");
+    var changeData = {operation:"PARSE_MXML", sourceDir:input};
     console.log(changeData);
     $.ajax({
         url: '/upload',
@@ -149,4 +119,34 @@ function discSelect(type){
     } else {
             item.next().attr("placeholder","");
     }
+}
+
+function getTree (parentSub,parentFiles,parentName){
+    var str="";
+    str += "<li><a>" + parentName + "</a>";
+
+    if(parentFiles.length > 0){//一级
+        str += "<ul>";
+        for(var i = 0; i < parentFiles.length; i++){
+        str+="<li><a>"+parentFiles[i]+"</a></li>"
+        }
+    }
+    if(parentSub.length > 0){
+        if(parentFiles.length <= 0 && parentSub.length > 0){
+        str += "<ul>";
+        }
+        for(var j=0; j < parentSub.length; j++){
+        var name=parentSub[j].name;
+        var sub=parentSub[j].sub;
+        var files=parentSub[j].files;
+        str+="<li><a>"+ getTree(sub,files,name)+"</a></li>";
+        }
+    }
+
+    if(parentSub.length > 0 || parentFiles.length > 0){
+    str+="</ul></li>";
+    } else {
+    str+="</li>";
+    }
+    return str;
 }
