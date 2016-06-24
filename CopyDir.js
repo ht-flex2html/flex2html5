@@ -1,4 +1,4 @@
-var fs=require("fs");
+var fs = require("fs");
 
 function copyDir(originPath){
 	// this.originPath=originPath;//本地项目路径 
