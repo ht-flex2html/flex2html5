@@ -1,6 +1,6 @@
 var fs = require("fs");	
 function route(pathname,handle,response,request) {
- console.log("About to route a request for " + pathname);
+//  console.log("About to route a request for " + pathname);
 	 if(pathname == "/favicon.ico"){
 	 	response.end();
 	 } else if (pathname == "/start" || pathname == "/"){

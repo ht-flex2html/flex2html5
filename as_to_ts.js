@@ -61,19 +61,20 @@ function run(sourceDir, outputDir, parseType) {
 
         var outputFileName;
         var outputContent;
-        
+
         var parseAS = function () {
             parser = new AS3Parser();
             var ast = parser.buildAst(path.basename(file), content);
             outputFileName = file.replace(/.as$/i, '.ts');
             outputContent = emitter.emit(ast, content);
+            console.log(file + "转化完成");
         }
 
         var parseMXML = function () {
-            parser = new XMLParser(content);
             outputFileName = file.replace(/.mxml$/i,'.html');
+            parser = new XMLParser(content, outputFileName);
             outputContent = parser.outStream();
-            console.log(outputContent);
+            console.log(file + "转化完成");
         }
         
         switch (parseType) {

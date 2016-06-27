@@ -15,17 +15,16 @@ var LastTagType;
 var scriptDir = "js_output/";
 var reg = /.*:/;
 var defindLog = "defind_";
-
+var defindJsOutputLog = "defind_";
 var XMLParser = (function () {
-    function XMLParser(content) {
-        //content=content.replace(/\r\n/g,"").replace(/\n/g,"");
+    function XMLParser(content, class_name) {
         this.parser = new Sax.parser(false);
         
         this.parser.onopentag = function (tag) {
             curTagName = tag.name.replace(reg, "");
-            console.log(curTagName);
+            // console.log(curTagName);
             if(!rootTag)rootTag=tag;
-            console.log(LastTagType);
+            // console.log(LastTagType);        
             if (HTMLElem && attributeParam && LastTagType > 0) {
                 HTMLElem.addAttributes(attributeParam);
                 currentDom = HTMLElem.addHtmlElementToDOM(currentDom);
@@ -103,22 +102,23 @@ var XMLParser = (function () {
         this.parser.onclosetag = function (tagName) {
             tagName = tagName.replace(reg,"");
             //父标签关闭时设置
-            if(HtmlKind.domTags.hasOwnProperty(tagName)){
-                if(tagName == curTagName){
+            if (HtmlKind.domTags.hasOwnProperty(tagName)) {
+                if (tagName == curTagName) {
                     LastTagType = tagTypes.hastext;
                 } else {
                     currentDom = currentDom.parent();
                 }
             }
-            if (tagName == rootTag.name.replace(reg,"") && scriptBuffer.toString().length >0) {
+
+            if (tagName == rootTag.name.replace(reg,"") && scriptBuffer.toString().length > 0) {
                 //将script 生成到文件
-                var class_name = "test";
+                class_name = class_name.replace(/.html$/g,"");
                 var fs = require("fs");
                 var path = require('path');
-                var filePath = scriptDir + class_name + ".as";
+                var filePath = scriptDir + defindJsOutputLog + class_name;
                 var scripts=scriptBuffer.toString();
-                fs.createFileSync(path.resolve(filePath),scripts );
-                Html.addScriptLink(filePath);
+                fs.createFileSync(path.resolve("output/" + filePath + ".ts"), scripts);
+                Html.addScriptLink(filePath + ".js");
                 //在Html页面中保留引用信息,方便后续修改
                 var linkInfo=scripts.match(/import\s\S*;/g).join("\r\n");
                 if(linkInfo){
@@ -129,10 +129,16 @@ var XMLParser = (function () {
         
         this.parser.onend = function () {
           //全部解析完毕后处理
+          scriptBuffer = new StringBuffer();
+          currentDom = null;
+          rootTag = null;
+          HTMLElems = null;
         }
+
         this.parser.onerror = function (e) {
           //当解析出错时处理
         }
+
         this.parser.write(content).end();
 
     }
@@ -140,6 +146,7 @@ var XMLParser = (function () {
     XMLParser.prototype.outStream= function () {
         return Html.outStream();
     }
+
     return XMLParser;
 })();
 module.exports = XMLParser;

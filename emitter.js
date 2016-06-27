@@ -630,13 +630,13 @@ function commentNode(node, catchSemi) {
     insert('*/');
 }
 function catchup(index) {
-    console.log(index);
+    // console.log(index);
     if (state.index > index) {
         return;
     }
     while (state.index !== index) {
-        console.log(state.index);
-        console.log(data.source[state.index]);
+        // console.log(state.index);
+        // console.log(data.source[state.index]);
         output += data.source[state.index];
         state.index++;
     }
