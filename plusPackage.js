@@ -64,5 +64,37 @@ var PlusPackage = {
             return {content:type, skipToNum:node.end};
         }
     },
+    text: {
+        MapFunction:function (node) {
+            var type=node.text;
+           if (node.parent && node.parent.kind === NodeKind.DOT) {
+                 type="value";
+            }
+            return {content:type, skipToNum:node.end};
+        }
+    },
+    getItemAt: {
+        MapFunction:function (node) {
+            var type = node.text;
+           if (node.parent && node.parent.kind === NodeKind.DOT) {
+                 type="";
+            }
+            return {content:type, skipToNum:node.end};
+        }
+    },
+    adataProvider: {
+        MapFunction: function (node) {
+           var type = node.text;
+           if (node.parent && node.parent.kind === NodeKind.DOT) {
+               var id = node.parent.findChild("identifier") && node.parent.findChild("identifier");
+                 if (node.parent.parent && node.parent.parent.kind === NodeKind.ASSIGN) {
+                     var source = node.parent.findChild("identifier") && node.parent.findChild("identifier");
+                     type = "renderData('" + id + "',null,nul)";
+                     return {content:type, skipToNum:node.parent.parent.end};
+                 }
+            }
+            return {content:type, skipToNum:node.end};
+        }
+    }
 }
 module.exports = PlusPackage;

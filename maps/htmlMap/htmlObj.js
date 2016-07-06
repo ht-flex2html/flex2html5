@@ -17,9 +17,11 @@ var Html = (function () {
         $("head").append("<script type='text/javascript' src='" + filePath + "'></script>\r\n");
     }
     Html.addImportInfo =function (info) {
-        $("head script").append(info);
+        if($("head script").attr("define") !== "define")$("head").append("<script define='define'></script>");
+        $("head script[define='define']").append(info);
     }
     Html.outStream= function () {
+        $("head script[define='define']").removeAttr('define');
         return $.html();
     }
 
@@ -33,7 +35,7 @@ var Html = (function () {
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
         // console.log(elem);
         if(!currentDom){
-            content = fs.readFileSync('module/htmlLayout.html','utf-8');
+            content = fs.readFileSync('layout/htmlLayout.html','utf-8');
             $ = cheerio.load(content);
             currentDom = $("body");
         }

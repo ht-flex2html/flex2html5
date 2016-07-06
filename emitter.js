@@ -490,10 +490,15 @@ function emitPlusPackage(node,isinsert) {
         var result = PlusPackage[node.text].MapFunction(node);
         var type = result.content;
         var skipNum = result.skipToNum; 
-        if (!!type && isinsert){
+        if (type !== "" && isinsert){
             insert(type);
             skipTo(skipNum);
-        }else{
+        } else if (type === "" && isinsert) {
+            if (node.parent && node.parent.kind === NodeKind.DOT) {
+                subtract(1);
+                skipTo(skipNum);
+            }
+        } else{
             return type;
         }
     }
@@ -657,6 +662,9 @@ function skip(number) {
 }
 function insert(string) {
     output += string;
+}
+function subtract(index){
+    output = output.substr(0, output.length - index);
 }
 function consume(string, limit) {
     var index = data.source.indexOf(string, state.index) + string.length;
