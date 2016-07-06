@@ -1,7 +1,7 @@
 var NodeKind = require('./nodeKind');
 var KeyWords = require('./keywords');
 var Node = require('./nodeObj');
-var basePackage = require("./basePackage");
+var PlusPackage = require("./plusPackage");
 
 //Utils
 function assign(target) {
@@ -140,6 +140,7 @@ visitors[NodeKind.OP] = emitOp;
 visitors[NodeKind.IDENTIFIER] = emitIdent;
 visitors[NodeKind.XML_LITERAL] = emitXMLLiteral;
 visitors[NodeKind.CONST_LIST] = emitConstList;
+visitors[NodeKind.LITERAL] = emitLiteral;
 // visitors[No]
 function visitNode(node) {
     if (!node) {
@@ -367,9 +368,13 @@ function emitType(node) {
         case 'Array':
             type = 'any[]';
             break;
+        case 'ArrayCollection':
+            type = 'Array<any>';
+            break;
         default:
-            type = node.text;
+            type = emitPlusPackage(node,false) || node.text;
     }
+
     insert(type);
 }
 function emitVector(node) {
@@ -480,21 +485,23 @@ function emitOp(node) {
     }
     catchup(node.end);
 }
-function emitBasePackage(node) {
-    if (!!basePackage[node.text]){
-        var result = basePackage[node.text].MapFunction(node);
+function emitPlusPackage(node,isinsert) {
+    if (!!PlusPackage[node.text]){
+        var result = PlusPackage[node.text].MapFunction(node);
         var type = result.content;
         var skipNum = result.skipToNum; 
-        if (!!type){
+        if (!!type && isinsert){
             insert(type);
             skipTo(skipNum);
+        }else{
+            return type;
         }
     }
     return;
 }
 function emitIdent(node) {
     catchup(node.start);
-    emitBasePackage(node);
+    emitPlusPackage(node,true);
     
        //in case of dot just check the first
     if (node.parent && node.parent.kind === NodeKind.DOT) {
@@ -518,6 +525,10 @@ function emitXMLLiteral(node) {
     catchup(node.start);
     insert(JSON.stringify(node.text));
     skipTo(node.end);
+}
+function emitLiteral(node) {
+    catchup(node.start);
+    emitPlusPackage(node,true);
 }
 function enterClassScope(contentsNode) {
     var found = {};

@@ -6,7 +6,8 @@ var path = require('path');
 var rimraf = require('rimraf');
 
 function start(response,request,pathname){
-    fs.readFile("index.html",function(error, data) {
+    //fs.readFile("index.html",function(error, data) {
+      fs.readFile("demo.html",function(error, data) {
         if(error){  
             console.log(error);  
         }else{  

@@ -15,6 +15,8 @@
 	<div class="contain">
 		<div>
 			<span class="discTitle">输入要转换的资源</span>
+			<input id="filedir" placeholder="请输入文件夹路径" type="text">
+			<br />
 			<select id="discInput" onchange="discSelect(1)">
 				<option>c:/</option>
 				<option>d:/</option>
@@ -37,7 +39,7 @@
 			</select>
 			<input id="outputDir" name="outputDir" />
 		</div>
-		<button id="submit" onclick="UploadFile();return false;" class="btn btn-success mt10">开始转换</button>
+		<button id="submit" onclick="parseAS();return false;" class="btn btn-success mt10">开始转换</button>
 		 <div id="scanModule" style="display: none;">
 			<div class="tree">
 				<!-- <button id="all">Toggle All</button> -->
