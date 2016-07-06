@@ -385,9 +385,6 @@ function emitVector(node) {
     }
     skipTo(node.end);
 }
-function emitAlert(node){
-    catchup(node.start);
-}
 function emitShortVector(node) {
     catchup(node.start);
     var vector = node.findChild(NodeKind.VECTOR);

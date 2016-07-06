@@ -1,6 +1,6 @@
 var NodeKind = require("./nodeKind");
 var basePackage = {
-    Alert:{
+    Alert: {
         MapFunction:function (node) {
            if (node.parent && node.parent.kind === NodeKind.DOT) {
                 var arrChildren = node.parent.children;

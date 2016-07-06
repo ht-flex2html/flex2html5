@@ -6,13 +6,11 @@ require('fs-extended');
 var rimraf = require('rimraf');
 var fs = require("fs");
 var XMLParser = require("./xmlParser");
-var htmlObj = require("./htmlObj");
 function flatten(arr) {
     return arr.reduce(function (result, val) {
         if (Array.isArray(val)) {
             result.push.apply(result, flatten(val));
-        }
-        else {
+        } else {
             result.push(val);
         }
         return result;
@@ -48,7 +46,7 @@ function run(sourceDir, outputDir, parseType) {
     });
     
     var length = files.length;
-    var asAccount = {functionNum:0,interfaceNum:0,classNum:0};
+    var asAccount = {functionNum:0, interfaceNum:0, classNum:0};
     files.forEach(function (file) {
         var parser;
         var content = fs.readFileSync(path.resolve(sourceDir, file), 'UTF-8');
@@ -87,7 +85,7 @@ function run(sourceDir, outputDir, parseType) {
         }
         var outputFilePath = path.resolve(outputDir, outputFileName);
         if (fs.existsSync(outputFilePath)) {
-                rimraf.sync(outputFilePath);
+            rimraf.sync(outputFilePath);
         }
         fs.createFileSync(outputFilePath, outputContent);
     });

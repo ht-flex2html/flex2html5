@@ -1,10 +1,9 @@
 var cheerio = require('cheerio');
 var fs = require('fs');
+var BootCssMap = require('./bootCssMap');
 var Html = (function () {
     var content = "";
     var $ = null;
-    Html.content = "";
-    Html.$ = null;
     function Html(tag, attributes, style, extend , text, parentid) {
         this.tag = tag;
         this.attributes = attributes;
@@ -14,17 +13,15 @@ var Html = (function () {
         this.parentid = parentid;
     }
 
-
     Html.addScriptLink= function (filePath) {
         $("head").append("<script type='text/javascript' src='" + filePath + "'></script>\r\n");
     }
     Html.addImportInfo =function (info) {
-        $("head").append("<script>\r\n/*\r\n"+info+"\r\n*/\r\n</script>\r\n");
+        $("head script").append(info);
     }
     Html.outStream= function () {
         return $.html();
     }
-
 
     Html.prototype.addAttributes = function (array) {
         this.attributes = array.attributes;
@@ -50,7 +47,10 @@ var Html = (function () {
                             + (this.attributes || "") + ">" 
                             + (this.text || "") 
                             + "</" + this.tag +">");
-                            
+        
+        if (BootCssMap.hasOwnProperty(this.tag.toUpperCase())) {
+                currentDom.children().last().addClass(BootCssMap[this.tag.toUpperCase()]);
+        }  
         return currentDom.children().last();
     }
     

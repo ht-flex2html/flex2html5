@@ -9,7 +9,7 @@ var HtmlKind = {
         BUTTON: "button",
         DATAGRID: "table",
         COLUMNS: "tr",
-        DATAGRIDCOLUMN:"td",
+        DATAGRIDCOLUMN:"th",
         APPLICATION:"form",
     },
 
@@ -17,9 +17,8 @@ var HtmlKind = {
         ID:"id",
         TITLE:"title",
         NAME:"name",
-        LABEL:"text",
-        TEXT:"text",
-        HEADERTEXT:"text"
+
+
     },
 
     styleTags : {
@@ -33,7 +32,12 @@ var HtmlKind = {
 
     extendTags : {
         CLICK:"onclick",
-        CUSTOMER:"customer"
+        CUSTOMER:"customer",
+        CREATIONCOMPLETE: "creatOnComplete",
+        DATAPROVIDER: "dataProvider",
+        LABEL:"text",
+        TEXT:"text",
+        HEADERTEXT:"text"
     }
 }
 module.exports = HtmlKind;

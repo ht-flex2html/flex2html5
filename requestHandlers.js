@@ -1,5 +1,4 @@
 var fs = require("fs");
-// var formidable = require("formidable");
 var tools = require("./tool");
 var copyDir = require("./CopyDir");
 var as_to_ts = require("./as_to_ts");
@@ -20,9 +19,9 @@ function start(response,request,pathname){
 
 function init(response,request,pathname) {
     fs.readFile(pathname.substring(1),function(error, data) {
-        if(error){  
+        if (error) {  
             console.log(error);  
-        }else{  
+        } else {  
             response.writeHead(200, {"Content-Type": tools.getContentType(pathname)});
             response.write(data);
             response.end();      
@@ -32,7 +31,6 @@ function init(response,request,pathname) {
 
 function upload(response,request,pathname) {
 
-    //  console.log("访问/upload时调用这个。");
      var responseData = {sourceDir: "", outputDir: ""};
      var postDataChunk;
      var exchangeSource = {};
@@ -40,7 +38,6 @@ function upload(response,request,pathname) {
      
      request.on("data",function(data){
         var data = JSON.parse(data);
-
         var sourceDir = data.sourceDir;
         var rootDir = path.resolve(process.cwd(), "output");
         
@@ -63,6 +60,9 @@ function upload(response,request,pathname) {
             }
 
             asAcountResult = as_to_ts.run(sourceDir, rootDir, data.operation);
+            if(data.operation === "PARSE_AS"){
+                as_to_ts.run("output/js_output", "output/js_output", "PARSE_AS");
+            }
 
             responseData.anlyiseNum = {
                             classNum:asAcountResult.classNum,

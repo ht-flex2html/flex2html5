@@ -23,5 +23,5 @@ function parseDir(sourcePath,file){
 		}
 	});
 	return item;
-	}
+}
 exports.copyDir = copyDir;

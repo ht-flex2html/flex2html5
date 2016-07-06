@@ -1,16 +1,26 @@
 var Sax = require('sax');
-var Html = require('./htmlObj');
-var HtmlKind = require('./htmlKind');
 var StringBuffer=require('./stringBuffer');
-var HtmlStyleMap = require('./htmlStyleMap');
-var HtmlAttrMap = require('./htmlAttrMap');
+
+var Html = require('./maps/htmlMap/htmlObj');
+var HtmlKind = require('./maps/htmlMap/htmlKind');
+var HtmlStyleMap = require('./maps/htmlMap/htmlStyleMap');
+var HtmlAttrMap = require('./maps/htmlMap/htmlAttrMap');
+var HtmlCssMap = require('./maps/htmlMap/htmlCssMap');
+
+var isBoot = false;
+var isAngular = false;
+
+var AngularAttrMap = require('./maps/angularMap/angularAttrMap');
 
 var HTMLElems = [];
 var HTMLElem,currentDom,rootTag,curTagName,arrtValue;
 var attributeParam = {};
 var styleArray,extendArray,paramTagsArray;
 var scriptBuffer = new StringBuffer();
-var tagTypes={"selfclose":0, "hassubtag":1, "hastext":2};
+var loadBuffer = new StringBuffer();
+var functionBuffer = new StringBuffer();
+loadBuffer.append('window.onload = function () {');
+var tagTypes = {"selfclose":0, "hassubtag":1, "hastext":2};
 var LastTagType;
 var scriptDir = "js_output/";
 var reg = /.*:/;
@@ -22,24 +32,30 @@ var XMLParser = (function () {
         
         this.parser.onopentag = function (tag) {
             curTagName = tag.name.replace(reg, "");
-            // console.log(curTagName);
-            if(!rootTag)rootTag=tag;
-            // console.log(LastTagType);        
+            if(!rootTag)rootTag = tag;
+            if (isBoot) {
+                HtmlStyleMap = require('./maps/bootMap/bootStyleMap');
+                HtmlAttrMap = require('./maps/bootMap/bootAttrMap');
+                HtmlCssMap = require('./maps/bootMap/bootCssMap');
+                Html = require("./maps/bootMap/bootObj");
+            }
+            
             if (HTMLElem && attributeParam && LastTagType > 0) {
                 HTMLElem.addAttributes(attributeParam);
                 currentDom = HTMLElem.addHtmlElementToDOM(currentDom);
-                if(LastTagType==tagTypes.hastext){
+                if(LastTagType == tagTypes.hastext){
                     currentDom = currentDom.parent();
                 }
                 HTMLElem = null;
             }
             
             if (HtmlKind.domTags.hasOwnProperty(curTagName)) {
-                HTMLElem=new Html(HtmlKind.domTags[curTagName]);
+                var domTag = HtmlKind.domTags[curTagName];
+                HTMLElem=new Html(domTag);
                 attrArray = new Array();
                 styleArray = new Array();
                 extendArray = new Array();
-                
+
                 for (var key in tag.attributes) {
                     arrtValue = tag.attributes[key];
                     //将属性加入styleArray等
@@ -51,16 +67,23 @@ var XMLParser = (function () {
                             }
                             styleArray.push(styleString);
                         } else if (HtmlKind.attrTags.hasOwnProperty(key)) {
-                            //根据标签，提取text属性
-                            if (HtmlAttrMap[curTagName]){
-                                if (HtmlAttrMap[curTagName](key, arrtValue)) {
-                                    attributeParam.text = arrtValue;
-                                }
-                            } else {
-                                attrArray.push(HtmlKind.attrTags[key] + "=" + arrtValue);
-                            }
+                            attrArray.push(HtmlKind.attrTags[key] + "=" + arrtValue);
                         } else if (HtmlKind.extendTags.hasOwnProperty(key)) {
-                            extendArray.push(HtmlKind.extendTags[key] + "=" + arrtValue);
+                            //根据标签，提取text属性
+                            if (isAngular) {
+                                    if (AngularAttrMap["TAG"][domTag.toUpperCase()]) {
+                                         AngularAttrMap["TAG"][domTag.toUpperCase()](key, arrtValue, attrArray);
+                                    }
+                            }
+                            if (HtmlAttrMap["TAG"][curTagName]) {
+                                HtmlAttrMap["TAG"][curTagName](key, arrtValue, attributeParam);
+                                
+                            } else {
+                                extendArray.push(HtmlKind.extendTags[key] + "=" + arrtValue);   
+                            }
+                            if (HtmlAttrMap["ATTR"][key]) {
+                                HtmlAttrMap["ATTR"][key]([functionBuffer,loadBuffer], arrtValue, curTagName);
+                            }
                         } else {
                             extendArray.push(defindLog + key + "=" + arrtValue);
                         }
@@ -116,31 +139,33 @@ var XMLParser = (function () {
                 var fs = require("fs");
                 var path = require('path');
                 var filePath = scriptDir + defindJsOutputLog + class_name;
+                loadBuffer.append("}");
                 var scripts=scriptBuffer.toString();
-                fs.createFileSync(path.resolve("output/" + filePath + ".ts"), scripts);
+                fs.createFileSync(path.resolve("output/" + filePath + ".as"), scripts);
                 Html.addScriptLink(filePath + ".js");
                 //在Html页面中保留引用信息,方便后续修改
-                var linkInfo=scripts.match(/import\s\S*;/g).join("\r\n");
-                if(linkInfo){
-                    Html.addImportInfo(linkInfo);
+                var linkInfo = scripts.match(/import\s\S*;/g).join("\r\n");
+                if (linkInfo) {
+                    Html.addImportInfo("\r\n/*\r\n" + linkInfo + "\r\n*/\r\n" + loadBuffer.toString() + "\r\n" + functionBuffer.toString());
                 }
             }
         }
         
         this.parser.onend = function () {
           //全部解析完毕后处理
-          scriptBuffer = new StringBuffer();
-          currentDom = null;
-          rootTag = null;
-          HTMLElems = null;
+            scriptBuffer = new StringBuffer();
+            loadBuffer = new StringBuffer();
+            loadBuffer.append('window.onload = function () {');
+            functionBuffer = new StringBuffer();
+            currentDom = null;
+            rootTag = null;
+            HTMLElems = null;
         }
 
         this.parser.onerror = function (e) {
           //当解析出错时处理
         }
-
         this.parser.write(content).end();
-
     }
 
     XMLParser.prototype.outStream= function () {
