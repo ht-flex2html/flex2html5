@@ -118,7 +118,7 @@ function visitNodes(nodes) {
     }
     nodes.forEach(function (node) {
         // console.log(node)
-         return visitNode(node); 
+         return visitNode(node);
     });
 }
 var visitors = {};
@@ -493,11 +493,6 @@ function emitPlusPackage(node,isinsert) {
         if (type !== "" && isinsert){
             insert(type);
             skipTo(skipNum);
-        } else if (type === "" && isinsert) {
-            if (node.parent && node.parent.kind === NodeKind.DOT) {
-                subtract(1);
-                skipTo(skipNum);
-            }
         } else{
             return type;
         }
@@ -505,9 +500,7 @@ function emitPlusPackage(node,isinsert) {
     return;
 }
 function emitIdent(node) {
-    catchup(node.start);
-    emitPlusPackage(node,true);
-    
+    catchup(node.start);  
        //in case of dot just check the first
     if (node.parent && node.parent.kind === NodeKind.DOT) {
         if (node.parent.children[0] !== node) {
@@ -525,6 +518,7 @@ function emitIdent(node) {
         insert('this.');
     }
     state.emitThisForNextIdent = true;
+    emitPlusPackage(node,true);
 }
 function emitXMLLiteral(node) {
     catchup(node.start);
@@ -663,8 +657,8 @@ function skip(number) {
 function insert(string) {
     output += string;
 }
-function subtract(index){
-    output = output.substr(0, output.length - index);
+function subtract(len){
+    output = output.substr(0, output.length - len);
 }
 function consume(string, limit) {
     var index = data.source.indexOf(string, state.index) + string.length;

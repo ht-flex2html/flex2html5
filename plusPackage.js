@@ -22,19 +22,19 @@ var PlusPackage = {
     //方法转换
     Alert: {
         MapFunction:function (node) {
+           var type = node.text;
+           var skipToNum = node.end;
            if (node.parent && node.parent.kind === NodeKind.DOT) {
                 var arrChildren = node.parent.children;
                 var lastNodeChildren = arrChildren[arrChildren.length - 1];
-                var type;
-
                 switch(lastNodeChildren.text){
                     case "show":
                         type = "alert";
+                        skipToNum = lastNodeChildren.end;
                         break;
                 }
-                return {content:type, skipToNum:lastNodeChildren.end}
             }
-            return {content:node.text, skipToNum:node.end};
+            return {content:type, skipToNum:skipToNum};
         }
     },
     addItem: {
@@ -76,10 +76,24 @@ var PlusPackage = {
     getItemAt: {
         MapFunction:function (node) {
             var type = node.text;
+            var skipNum=node.end;
            if (node.parent && node.parent.kind === NodeKind.DOT) {
                  type="";
+                 if(node.parent.parent){
+                     var ArgumentsNode=node.parent.parent.findChild(NodeKind.ARGUMENTS);
+                     if(ArgumentsNode){
+                        var agmtArray = new Array();
+                         for(var agmt in ArgumentsNode.children){
+                            agmtArray.push(ArgumentsNode.children[agmt].text);
+                         }
+                         if(agmtArray.length>0){
+                             type+="["+agmtArray.join()+"]";
+                             skipNum=node.parent.parent.end;
+                         }
+                     }
+                 }
             }
-            return {content:type, skipToNum:node.end};
+            return {content:type, skipToNum:skipNum};
         }
     },
     adataProvider: {
