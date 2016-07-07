@@ -1335,7 +1335,11 @@ var AS3Parser = (function () {
         this.nextToken(); // name
         this.consume(Operators.COLUMN);
         var expr = this.parseExpression();
-        var val = new Node(NodeKind.VALUE, this.tok.index, expr.end, null, [expr]);
+        var valNodeIdx=this.tok.index;
+        if(expr &&　expr.children.length>0){
+            valNodeIdx=expr.children[0].start;
+        }
+        var val = new Node(NodeKind.VALUE, valNodeIdx, expr.end, null, [expr]);
         result.children.push(val);
         result.end = val.end;
         return result;

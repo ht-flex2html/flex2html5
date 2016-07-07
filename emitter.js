@@ -511,7 +511,7 @@ function emitIdent(node) {
         return;
     }
     var def = findDefInScope(node.text);
-    if (def && def.bound) {
+    if (def && def.bound && state.index <= node.start) {
         insert(def.bound + '.');
     }
     if (!def && state.currentClassName && globVars.indexOf(node.text) === -1 && state.emitThisForNextIdent && node.text !== state.currentClassName) {
