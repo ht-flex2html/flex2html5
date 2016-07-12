@@ -35,13 +35,13 @@ function parseColumText(attr, arrtValue, attributeParam) {
 }
 
 function parseCreationComplete(bufferAttr, arrtValue) {
-    bufferAttr[1].append(arrtValue + ";");
+    bufferAttr.loadBuffer.append(arrtValue + ";");
     return;
 }
 
 function pareseDataProvider(bufferAttr, arrtValue, tag){
     var isRender = false;
-    isRender = /function renderData/g.test(bufferAttr[0].toString());
+    isRender = /function renderData/g.test(bufferAttr.functionBuffer.toString());
     if(!isRender){
             renderData = '\r\nfunction renderData(id, label, displayArray) {\r\n'
                         +'var elem = document.getElementById(id);\r\n'
@@ -63,14 +63,14 @@ function pareseDataProvider(bufferAttr, arrtValue, tag){
                         +'}\r\n'
                         +'elem.innerHTML = output;\r\n'
                     +'}\r\n';
-        bufferAttr[0].append(renderData);
+        bufferAttr.functionBuffer.append(renderData);
     }
     switch (tag) {
         case "COMBOBOX":
-            bufferAttr[1].append('\r\nrenderData("sex_cmb", "select", displayArray);');
+            bufferAttr.loadBuffer.append('\r\nrenderData("sex_cmb", "select", displayArray);');
             break;
         case "DATAGRID":
-            bufferAttr[1].append('\r\nrenderData("data_dg", "table", displayArray);');
+            bufferAttr.loadBuffer.append('\r\nrenderData("data_dg", "table", displayArray);');
             break;
     }
 }

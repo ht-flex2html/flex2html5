@@ -88,7 +88,7 @@ var PlusPackage = {
                          }
                          if(agmtArray.length>0){
                              type+="["+agmtArray.join()+"]";
-                             skipNum=node.parent.parent.end;
+                             skipNum = node.parent.parent.end;
                          }
                      }
                  }
@@ -96,14 +96,16 @@ var PlusPackage = {
             return {content:type, skipToNum:skipNum};
         }
     },
-    adataProvider: {
+    dataProvider: {
         MapFunction: function (node) {
            var type = node.text;
            if (node.parent && node.parent.kind === NodeKind.DOT) {
-               var id = node.parent.findChild("identifier") && node.parent.findChild("identifier");
+               var id = node.parent.findChild("identifier") && node.parent.findChild("identifier").text;
                  if (node.parent.parent && node.parent.parent.kind === NodeKind.ASSIGN) {
-                     var source = node.parent.findChild("identifier") && node.parent.findChild("identifier");
-                     type = "renderData('" + id + "',null,nul)";
+                     var source = node.parent.parent.findChild('identifier')?
+                                  node.parent.parent.findChild('identifier').text:
+                                  "'dataSource'";
+                     type = "renderData('" + id + "','tagType', " + source + ")";
                      return {content:type, skipToNum:node.parent.parent.end};
                  }
             }

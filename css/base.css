@@ -1,24 +1,14 @@
-.mt5{
-	margin-top: 5px;
+*{
+	position: absolute;
 }
-.mt10{
-	margin-top: 10px;
+table,table *{
+	border: 1px solid #ccc;
+	border-collapse: collapse;
 }
-.mt15{
-	margin-top: 15px!important;
+table *{
+	position: initial;
 }
-.mt20{
-	margin-top: 20px!important;
+input {
+	border-radius: 1px;
 }
-.mt80{
-	margin-top: 80px!important;
-}
-.ml{
-    margin-left: 10px;
-}
-.fl{
-    float: left!important;
-}
-.fr{
-	float: right!important;
-}
+

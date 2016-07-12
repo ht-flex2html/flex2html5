@@ -44,16 +44,17 @@ function upload(response,request,pathname) {
         
         //生成目录操作和翻译操作
         if(data.operation === "MK_DIR"){
-            if (fs.existsSync(rootDir)) {
-                if (!fs.statSync(rootDir).isDirectory()) {
-                    throw new Error('invalid ouput dir');
-                }
-                rimraf.sync(rootDir);
+            var isAngular = true;
+            //生成output文件夹
+            clear_mk_dir(rootDir);
+            if (isAngular) {
+                //生成angular项目框架
+                mkDir(path.resolve(process.cwd(), "layout/angularLayout"), rootDir, true);
+            } else {
+                mkDir(sourceDir, rootDir, false);
+                clear_mk_dir(rootDir + "/js_output");
+                createTsConfig(rootDir);
             }
-			fs.mkdirSync(rootDir);
-            createTsConfig();
-            clear_mk_dir(rootDir + "/js_output");
-            mkDir(sourceDir, rootDir);
             console.log("目录生成完毕");
         } else if (data.operation === "PARSE_MXML" || data.operation === "PARSE_AS") {
             if (!fs.existsSync(sourceDir) || !fs.statSync(sourceDir).isDirectory()) {
@@ -84,7 +85,7 @@ function upload(response,request,pathname) {
      });
 }
 
-function mkDir(sourcePath, rootDir){
+function mkDir(sourcePath, rootDir, isCopy){
 	var dirList = fs.readdirSync(sourcePath);
 	dirList.forEach(function(file){
 		if (fs.statSync(sourcePath + '\\' + file).isDirectory()) {
@@ -92,27 +93,108 @@ function mkDir(sourcePath, rootDir){
             clear_mk_dir(mkDirName);
 			mkDir(sourcePath + "\\" + file, mkDirName);
 		}
+        if (isCopy) {
+            if (fs.statSync(sourcePath + '\\' + file).isFile()) {
+                var content = fs.readFileSync(sourcePath + '\\' + file, "utf-8");
+                var mkDirName = rootDir + '\\' + file;
+                mk_file(mkDirName, content);
+		    }
+        }
 	});
+
 }
 
-function clear_mk_dir (path) {
-    if (fs.existsSync(path)) {
-        if (!fs.statSync(path).isDirectory()) {
+function clear_mk_dir (pathDir) {
+    if (fs.existsSync(pathDir)) {
+        if (!fs.statSync(pathDir).isDirectory()) {
             throw new Error('invalid ouput dir');
         }
-        rimraf.sync(path);
+        rimraf.sync(pathDir);
     }   
-    fs.mkdirSync(path);
+    fs.mkdirSync(pathDir);
+}
+
+
+function mk_file(pathFile, content) {
+    fs.createFileSync(pathFile, content);
 }
         
-function createTsConfig() {
+function createTsConfig(rootPath) {
     var taskContent = fs.readFileSync('.vscode/tasks.json','utf-8');
-    fs.createFileSync(path.resolve("output/.setting/tasks.json"), taskContent);
+    fs.createFileSync(path.resolve(rootPath + "/.setting/tasks.json"), taskContent);
 
     var configContent = fs.readFileSync('tsconfig.json','utf-8');
-    fs.createFileSync(path.resolve("output/tsconfig.json"), taskContent);
+    fs.createFileSync(path.resolve(rootPath + "/tsconfig.json"), taskContent);
+}
+
+function mkAngularDir(angularDir, rootPath) {
+    rootPath = path.resolve(rootPath + "/", angularDir.name);
+    clear_mk_dir(rootPath);
+
+    for (var index in angularDir.file) {
+        mk_file(path.resolve(rootPath, angularDir.file[index]), "");
+    }
+    
+    for (var index in angularDir.directory) {
+        mkAngularDir(angularDir.directory[index], rootPath);
+    }
+    return;
 }
  
+var angularDir = {
+    name: "",
+    file: ["application.js", "default.html"],
+    directory:[
+        { 
+            name: "core",
+            file: [],
+            directory: [ 
+                { name:"controllers", 
+                    file:[], 
+                    directory:[]
+                },
+                { name:"directives", 
+                    file:[], 
+                    directory:[]
+                },
+                { name:"modules", 
+                    file:[], 
+                    directory:[]
+                },
+                { name:"resources", 
+                    file:[], 
+                    directory:[]
+                },
+                { name:"services", 
+                    file:[], 
+                    directory:[]
+                }
+            ]
+        },
+        { 
+            name: "css",
+            file: [],
+            directory: []
+        },
+        { 
+            name: "image",
+            file: [],
+            directory: []
+        },
+        { 
+            name: "script",
+            file: [],
+            directory: []
+        },
+        { 
+            name: "views",
+            file: [],
+            directory: []
+        }
+    ]
+}
+
+
 exports.start = start;
 exports.upload = upload;
 exports.init = init;

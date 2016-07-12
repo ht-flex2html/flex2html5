@@ -486,14 +486,14 @@ function emitOp(node) {
     catchup(node.end);
 }
 function emitPlusPackage(node,isinsert) {
-    if (!!PlusPackage[node.text]){
+    if (!!PlusPackage[node.text]) {
         var result = PlusPackage[node.text].MapFunction(node);
         var type = result.content;
         var skipNum = result.skipToNum; 
-        if (type !== "" && isinsert){
+        if (type !== "" && isinsert) { 
             insert(type);
             skipTo(skipNum);
-        } else{
+        } else {
             return type;
         }
     }

@@ -1,5 +1,5 @@
 var BootCssMap = {
-    BUTTON: "btn-default",
+    BUTTON: "btn btn-primary",
     TABLE: "table"
 }
 module.exports = BootCssMap;

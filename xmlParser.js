@@ -7,7 +7,7 @@ var HtmlStyleMap = require('./maps/htmlMap/htmlStyleMap');
 var HtmlAttrMap = require('./maps/htmlMap/htmlAttrMap');
 var HtmlCssMap = require('./maps/htmlMap/htmlCssMap');
 
-var isBoot = false;
+var isBoot = true;
 var isAngular = false;
 
 var AngularAttrMap = require('./maps/angularMap/angularAttrMap');
@@ -82,7 +82,7 @@ var XMLParser = (function () {
                                 extendArray.push(HtmlKind.extendTags[key] + "=" + arrtValue);   
                             }
                             if (HtmlAttrMap["ATTR"][key]) {
-                                HtmlAttrMap["ATTR"][key]([functionBuffer,loadBuffer], arrtValue, curTagName);
+                                HtmlAttrMap["ATTR"][key]({functionBuffer:functionBuffer,loadBuffer:loadBuffer}, arrtValue, curTagName);
                             }
                         } else {
                             extendArray.push(defindLog + key + "=" + arrtValue);
