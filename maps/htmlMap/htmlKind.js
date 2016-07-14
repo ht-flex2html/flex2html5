@@ -17,8 +17,6 @@ var HtmlKind = {
         ID:"id",
         TITLE:"title",
         NAME:"name",
-
-
     },
 
     styleTags : {

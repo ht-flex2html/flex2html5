@@ -73,6 +73,10 @@ function run(sourceDir, outputDir, parseType) {
             parser = new XMLParser(content, outputFileName);
             outputContent = parser.outStream();
             console.log(file + "转化完成");
+            var isAngular = true;
+            if (isAngular) {
+                outputFileName = "views/" + outputFileName;
+            }
         }
         
         switch (parseType) {
@@ -87,6 +91,7 @@ function run(sourceDir, outputDir, parseType) {
         if (fs.existsSync(outputFilePath)) {
             rimraf.sync(outputFilePath);
         }
+
         fs.createFileSync(outputFilePath, outputContent);
     });
     return asAccount;

@@ -5,6 +5,9 @@ var as_to_ts = require("./as_to_ts");
 var path = require('path');
 var rimraf = require('rimraf');
 
+var isAngular = true;
+
+
 function start(response,request,pathname){
     //fs.readFile("index.html",function(error, data) {
       fs.readFile("demo.html",function(error, data) {
@@ -44,7 +47,6 @@ function upload(response,request,pathname) {
         
         //生成目录操作和翻译操作
         if(data.operation === "MK_DIR"){
-            var isAngular = true;
             //生成output文件夹
             clear_mk_dir(rootDir);
             if (isAngular) {
@@ -62,6 +64,30 @@ function upload(response,request,pathname) {
             }
 
             asAcountResult = as_to_ts.run(sourceDir, rootDir, data.operation);
+
+            if (isAngular && data.operation === "PARSE_MXML") {
+                var files = fs.readdirSync(rootDir + '/views');
+                var configString = fs.readFileSync(path.resolve(process.cwd(),"layout/angularlayout/application.js"), "utf-8");
+                var ctrString = fs.readFileSync(path.resolve(process.cwd(),"layout/angularlayout/core/controllers/mainController.ts"), "utf-8");
+                files.forEach(function (file) {
+                  var fileName = file.replace(".html", "");
+
+                  configString  += '\r\n\t\t.state("' + fileName + '", {'
+                                +   '\r\n\t\t\turl: "/' + fileName + '",'
+                                +   '\r\n\t\t\ttemplateUrl: "views/' + file + '",'
+                                +   '\r\n\t\t\tnresolve: {},'
+                                +   '\r\n\t\t\tcontroller:"' + fileName + 'Controller"'
+                                + '\r\n\t\t})';
+
+                  ctrString += "\r\n\t.controller('" + fileName + "Controller', ['$scope', function ($scope) {}])";
+                
+                }); 
+                configString += "\r\n})";
+                fs.createFileSync(path.resolve(rootDir, "application.js"), configString);
+                
+                fs.createFileSync(path.resolve(rootDir, "core/controllers/mainController.ts"), ctrString);
+            }   
+
             if(data.operation === "PARSE_AS"){
                 as_to_ts.run("output/js_output", "output/js_output", "PARSE_AS");
             }
@@ -71,6 +97,7 @@ function upload(response,request,pathname) {
                             interfaceNum:asAcountResult.interfaceNum,
                             functionNum:asAcountResult.functionNum
                            };
+
             responseData.directory = copyDir.copyDir(rootDir);
         }
         
@@ -91,7 +118,7 @@ function mkDir(sourcePath, rootDir, isCopy){
 		if (fs.statSync(sourcePath + '\\' + file).isDirectory()) {
             var mkDirName = rootDir + '\\' + file;
             clear_mk_dir(mkDirName);
-			mkDir(sourcePath + "\\" + file, mkDirName);
+			mkDir(sourcePath + "\\" + file, mkDirName, isCopy);
 		}
         if (isCopy) {
             if (fs.statSync(sourcePath + '\\' + file).isFile()) {
@@ -126,74 +153,6 @@ function createTsConfig(rootPath) {
     var configContent = fs.readFileSync('tsconfig.json','utf-8');
     fs.createFileSync(path.resolve(rootPath + "/tsconfig.json"), taskContent);
 }
-
-function mkAngularDir(angularDir, rootPath) {
-    rootPath = path.resolve(rootPath + "/", angularDir.name);
-    clear_mk_dir(rootPath);
-
-    for (var index in angularDir.file) {
-        mk_file(path.resolve(rootPath, angularDir.file[index]), "");
-    }
-    
-    for (var index in angularDir.directory) {
-        mkAngularDir(angularDir.directory[index], rootPath);
-    }
-    return;
-}
- 
-var angularDir = {
-    name: "",
-    file: ["application.js", "default.html"],
-    directory:[
-        { 
-            name: "core",
-            file: [],
-            directory: [ 
-                { name:"controllers", 
-                    file:[], 
-                    directory:[]
-                },
-                { name:"directives", 
-                    file:[], 
-                    directory:[]
-                },
-                { name:"modules", 
-                    file:[], 
-                    directory:[]
-                },
-                { name:"resources", 
-                    file:[], 
-                    directory:[]
-                },
-                { name:"services", 
-                    file:[], 
-                    directory:[]
-                }
-            ]
-        },
-        { 
-            name: "css",
-            file: [],
-            directory: []
-        },
-        { 
-            name: "image",
-            file: [],
-            directory: []
-        },
-        { 
-            name: "script",
-            file: [],
-            directory: []
-        },
-        { 
-            name: "views",
-            file: [],
-            directory: []
-        }
-    ]
-}
-
 
 exports.start = start;
 exports.upload = upload;

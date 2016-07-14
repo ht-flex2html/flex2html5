@@ -5,7 +5,6 @@ var Html = (function () {
     var content = "";
     var $ = null;
     function Html(tag, attributes, style, extend , text, parentid) {
-        this.tag = tag;
         this.attributes = attributes;
         this.style = style;
         this.extend = extend;
@@ -33,7 +32,6 @@ var Html = (function () {
     }
 
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
-        // console.log(elem);
         if(!currentDom){
             content = fs.readFileSync('layout/htmlLayout.html','utf-8');
             $ = cheerio.load(content);

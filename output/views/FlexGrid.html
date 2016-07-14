@@ -1,0 +1,10 @@
+<div><form style="width:464px;height:466px" defind_xmlns:fx="http://ns.adobe.com/mxml/2009" defind_xmlns:s="library://ns.adobe.com/flex/spark" defind_xmlns:mx="library://ns.adobe.com/flex/mx" creatoncomplete="initApp()">
+	
+	<div style="top:50px;width:464px;height:416px" defind_x="0" title="DataList">
+		<label style="left:57px;top:23px">Name:</label><input style="width:146px;left:101px;top:24px" id="query_name">
+		<label style="left:62px;top:54px">Sex:</label><select style="left:153px;top:49px" dataprovider="{displayArray}" defind_labelfield="sex" id="sex_cmb">
+		</select><button style="left:305px;top:33px" class="btn btn-primary">Query</button><div style="left:39.5px;top:87px;width:385px;height:178px" dataprovider="{displayArray}" defind_itemclick="Grid.SelectRow()" id="data_dg" ng-grid="grid_displayArray">
+			<div>
+				<div style="display:none" defind_datafield="id">id</div><div defind_datafield="name">Name</div><div defind_datafield="remark">Remark</div></div></div><label style="left:133px;top:289px">Name</label><label style="left:128px;top:315px">Remark</label><input style="left:227px;top:285px" id="name_txt">
+		<input style="left:227px;top:315px" id="remark_txt">
+		<button style="left:118px;top:354px" class="btn btn-primary">Add</button><button style="left:219px;top:354px" class="btn btn-primary">Update</button><button style="left:316px;top:354px" class="btn btn-primary">Delete</button></div></form></div>

@@ -1,6 +1,7 @@
 var AngularAttrMap = {
-    TAG:{
-        SELECT: createSelectTag
+    TAG: {
+        SELECT: createSelectTag,
+        DATAGRID: createTableTag
     }
 }
 
@@ -9,6 +10,16 @@ function createSelectTag(attr, arrtValue, attrArray) {
         case "DATAPROVIDER":
             arrtValue = arrtValue.replace(/{|}/g,"");
             attrArray.push('ng-option="x.sex for x in ' + arrtValue + '"');
+    }
+    return;
+}
+
+
+function createTableTag(attr, arrtValue, attrArray, domParam) {
+    switch (attr) {
+        case "DATAPROVIDER":
+            arrtValue = arrtValue.replace(/{|}/g,"");
+            attrArray.push('ng-grid="grid_' + arrtValue + '"');
     }
     return;
 }

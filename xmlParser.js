@@ -8,9 +8,10 @@ var HtmlAttrMap = require('./maps/htmlMap/htmlAttrMap');
 var HtmlCssMap = require('./maps/htmlMap/htmlCssMap');
 
 var isBoot = true;
-var isAngular = false;
+var isAngular = true;
 
 var AngularAttrMap = require('./maps/angularMap/angularAttrMap');
+var AngularHtmlKind = require('./maps/angularMap/angularHtmlKind');
 
 var HTMLElems = [];
 var HTMLElem,currentDom,rootTag,curTagName,arrtValue;
@@ -39,6 +40,11 @@ var XMLParser = (function () {
                 HtmlCssMap = require('./maps/bootMap/bootCssMap');
                 Html = require("./maps/bootMap/bootObj");
             }
+
+            if (isAngular) {
+                HtmlKind = require('./maps/angularMap/angularHtmlKind');
+                Html = require("./maps/angularMap/angularObj");
+            }
             
             if (HTMLElem && attributeParam && LastTagType > 0) {
                 HTMLElem.addAttributes(attributeParam);
@@ -47,6 +53,7 @@ var XMLParser = (function () {
                     currentDom = currentDom.parent();
                 }
                 HTMLElem = null;
+                attributeParam = {};
             }
             
             if (HtmlKind.domTags.hasOwnProperty(curTagName)) {
@@ -71,9 +78,9 @@ var XMLParser = (function () {
                         } else if (HtmlKind.extendTags.hasOwnProperty(key)) {
                             //根据标签，提取text属性
                             if (isAngular) {
-                                    if (AngularAttrMap["TAG"][domTag.toUpperCase()]) {
-                                         AngularAttrMap["TAG"][domTag.toUpperCase()](key, arrtValue, attrArray);
-                                    }
+                                if (AngularAttrMap["TAG"][curTagName]) {
+                                    AngularAttrMap["TAG"][curTagName](key, arrtValue, attrArray);
+                                }
                             }
                             if (HtmlAttrMap["TAG"][curTagName]) {
                                 HtmlAttrMap["TAG"][curTagName](key, arrtValue, attributeParam);

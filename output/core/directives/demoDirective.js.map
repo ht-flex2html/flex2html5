@@ -1,0 +1,1 @@
+{"version":3,"file":"demoDirective.js","sourceRoot":"","sources":["demoDirective.ts"],"names":[],"mappings":"AAAA,CAAC;IACG,OAAO;SACF,MAAM,CAAC,OAAO,CAAC;SACf,SAAS,CAAC,eAAe,EAAE,CAAC,QAAQ,EAAE,aAAa,CAAC,CAAC,CAAC;IAE3D;QACI,MAAM,CAAC;YACH,QAAQ,EAAE,IAAI;SACjB,CAAC;IACN,CAAC;AACL,CAAC,CAAC,EAAE,CAAA"}

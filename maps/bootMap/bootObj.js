@@ -31,7 +31,6 @@ var Html = (function () {
     }
 
     Html.prototype.addHtmlElementToDOM = function (currentDom) {
-        // console.log(elem);
         if(!currentDom){
             content = fs.readFileSync('layout/htmlLayout.html','utf-8');
             $ = cheerio.load(content);
