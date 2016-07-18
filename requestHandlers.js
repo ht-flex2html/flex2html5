@@ -67,7 +67,7 @@ function upload(response,request,pathname) {
 
             if (isAngular && data.operation === "PARSE_MXML") {
                 var files = fs.readdirSync(rootDir + '/views');
-                var configString = fs.readFileSync(path.resolve(process.cwd(),"layout/angularlayout/application.js"), "utf-8");
+                var configString = fs.readFileSync(path.resolve(process.cwd(),"layout/angularlayout/app.ts"), "utf-8");
                 var ctrString = fs.readFileSync(path.resolve(process.cwd(),"layout/angularlayout/core/controllers/mainController.ts"), "utf-8");
                 files.forEach(function (file) {
                   var fileName = file.replace(".html", "");
@@ -79,11 +79,20 @@ function upload(response,request,pathname) {
                                 +   '\r\n\t\t\tcontroller:"' + fileName + 'Controller"'
                                 + '\r\n\t\t})';
 
-                  ctrString += "\r\n\t.controller('" + fileName + "Controller', ['$scope', function ($scope) {}])";
+                  ctrString += '\r\n\texport class ' + fileName + 'Controller implements IController'
+                            +  '\r\n\t{'
+                            +  '\r\n\t\t      constructor($scope)'
+                            +  '\r\n\t\t      {'
+                            +  '\r\n\t\t\t          $scope.name="HelloWorld";'
+                            +  '\r\n\t\t     }'
+                            +  '\r\n\t  }'
+                            +  '\r\n\tapp.registerController("' + fileName + 'Controller",["$scope"]);'
                 
                 }); 
-                configString += "\r\n})";
-                fs.createFileSync(path.resolve(rootDir, "application.js"), configString);
+                configString += "\r\n\t}\r\n]);";
+                ctrString += "\r\n}";
+                
+                fs.createFileSync(path.resolve(rootDir, "app.ts"), configString);
                 
                 fs.createFileSync(path.resolve(rootDir, "core/controllers/mainController.ts"), ctrString);
             }   
