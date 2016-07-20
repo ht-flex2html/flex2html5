@@ -13,11 +13,12 @@ var Html = (function () {
         this.parentid = parentid;
     }
 
-    Html.addScriptLink= function (filePath) {
+   Html.addScriptLink= function (filePath) {
         $("head").append("<script type='text/javascript' src='" + filePath + "'></script>\r\n");
     }
     Html.addImportInfo =function (info) {
-        $("head script").append(info);
+        if($("head script").attr("define") !== "define")$("head").append("<script define='define'></script>");
+        $("head script[define='define']").text(info);
     }
     Html.outStream= function () {
         return $.html();

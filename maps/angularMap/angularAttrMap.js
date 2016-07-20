@@ -20,6 +20,7 @@ function createTableTag(attr, arrtValue, attrArray, domParam) {
         case "DATAPROVIDER":
             arrtValue = arrtValue.replace(/{|}/g,"");
             attrArray.push('ng-grid="grid_' + arrtValue + '"');
+            attrArray.push('class="gridStyle"');
     }
     return;
 }

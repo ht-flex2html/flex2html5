@@ -7,26 +7,6 @@ modules.forEach(function (module) { return angular.module(module, []); });
 // *** Push uiRouter or $urlRouterProvider won't work ***
 modules.push("ui.router");
 angular.module('app', modules);
-// Url routing
-angular.module('app').config(['$stateProvider', '$urlRouterProvider',
-    function routes($stateProvider, $urlRouterProvider) {
-        $urlRouterProvider
-            .otherwise("/main");
-        $stateProvider
-            .state("FlexGrid", {
-            url: "/FlexGrid",
-            templateUrl: "views/FlexGrid.html",
-            nresolve: {},
-            controller: "app.controllers.FlexGridController"
-        })
-            .state("main", {
-            url: "/main",
-            templateUrl: "views/main.html",
-            nresolve: {},
-            controller: "app.controllers.mainController"
-        });
-    }
-]);
 var app;
 (function (app) {
     var controllers;
@@ -98,3 +78,11 @@ var app;
     }
     app.registerService = registerService;
 })(app || (app = {}));
+// Url routing
+angular.module('app').config(['$stateProvider', '$urlRouterProvider',
+    function routes($stateProvider, $urlRouterProvider) {
+        $urlRouterProvider
+            .otherwise("/main");
+        $stateProvider;
+    }]);
+//# sourceMappingURL=app.js.map

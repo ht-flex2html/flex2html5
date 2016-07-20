@@ -55,7 +55,7 @@ function pareseDataProvider(bufferAttr, arrtValue, tag){
                         +'    output = "<tr><td>Name</td><td>Remark</td></tr>";\r\n'
                         +'    for (var index in displayArray) {\r\n'
                         +'        output += "<tr onclick=\'Grid.SelectRow(this)\'>"\r\n'
-                        +'            + "<td class = \'td_id\'>" + displayArray[index]["id"] + "</td>"\r\n'
+                        +'            + "<td class = \'td_id\' hidden=\'hidden\'>" + displayArray[index]["id"] + "</td>"\r\n'
                         +'            + "<td class = \'td_name\'>" + displayArray[index]["name"] + "</td>"\r\n'
                         +'            + "<td class = \'td_remark\'>" + displayArray[index]["remark"] + "</td>"\r\n'
                         +'            + "</tr>";\r\n'

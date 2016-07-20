@@ -80,6 +80,8 @@ var XMLParser = (function () {
                             if (isAngular) {
                                 if (AngularAttrMap["TAG"][curTagName]) {
                                     AngularAttrMap["TAG"][curTagName](key, arrtValue, attrArray);
+                                } else {
+                                    extendArray.push(HtmlKind.extendTags[key] + "=" + arrtValue);   
                                 }
                             }
                             if (HtmlAttrMap["TAG"][curTagName]) {

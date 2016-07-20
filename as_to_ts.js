@@ -6,6 +6,7 @@ require('fs-extended');
 var rimraf = require('rimraf');
 var fs = require("fs");
 var XMLParser = require("./xmlParser");
+var isAngular = true;
 function flatten(arr) {
     return arr.reduce(function (result, val) {
         if (Array.isArray(val)) {
@@ -73,7 +74,6 @@ function run(sourceDir, outputDir, parseType) {
             parser = new XMLParser(content, outputFileName);
             outputContent = parser.outStream();
             console.log(file + "转化完成");
-            var isAngular = true;
             if (isAngular) {
                 outputFileName = "views/" + outputFileName;
             }
