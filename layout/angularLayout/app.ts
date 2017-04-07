@@ -1,5 +1,5 @@
-/// <reference path="./javascript/angular.d.ts" />
-/// <reference path="./javascript/angular-ui-router.d.ts" />
+/// <reference path="javascript/angular.d.ts" />
+/// <reference path="javascript/angular-ui-router.d.ts" />
 
 'use strict';
 

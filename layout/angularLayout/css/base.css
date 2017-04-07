@@ -1,0 +1,17 @@
+*{
+	position: absolute;
+}
+table,table *{
+	border: 1px solid #ccc;
+	border-collapse: collapse;
+}
+table *{
+	position: initial;
+}
+input {
+	border-radius: 1px;
+}
+.gridStyle *{
+	position: initial;
+}
+
